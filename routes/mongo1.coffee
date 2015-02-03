@@ -2,6 +2,7 @@ express = require('express')
 mongodb = require('mongodb')
 promise = require('bluebird')
 request = require('request')
+logger = require('./logger')
 router = express.Router()
 ###
   Test page.. no specific function
@@ -96,7 +97,7 @@ misc3 = ->
     console.log response.statusCode
     return)
   .then ->
-    res.end 'GET to /mongo1'
+    res.end 'GET to /mongo1 '
     return
   return
 
