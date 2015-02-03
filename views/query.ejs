@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DMS Query</title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel="stylesheet" media="all" href="http://cdn.datatables.net/1.10.4/css/jquery.dataTables.min.css"/>
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type='text/javascript' src='https://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js'></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var queryKey = "<%= title %>";
+            $("#Page_Title").append('<span class="underline">' + decodeURIComponent(queryKey) + '</span>');
+            var targetURL = window.location.protocol + "//" + window.location.hostname + "/v1/query?query_key=" + queryKey + "&format=json";
+            console.log(targetURL);
+            $.getJSON(targetURL, function (json) {
+                console.log(json);
+                createTable(json, queryKey);
+            });
+        });
+
+        function createTable(json, queryKey) {
+            if (json.length != 0 && json[0].hasOwnProperty('query_date')) {
+                delta_time = timeAgoInWords(Date.parse(String(json[0].query_date).replace(/-/g, '/')));
+                $("#DMS_update_time").append('(Query result as of <span class="underline"><b>' + delta_time + '</b></span>)');
+                if (json[0].DMS_count == 0) {
+                    $("#footer_comment").append('<b>No DMS exists</b> for this query');
+
+                }
+                else {
+                    var output_json = [];
+                    $.each(json[0].DMS_List, function (i, item) {
+                        console.log(item);
+                        var temp_array = [];
+                        var DMS_URL = '<a href="http://ffs.sonyericsson.net/WebPages/Search.aspx?q=1___' + item['DMS_ID'] + '___issue" TARGET="_blank">' + item['DMS_ID'] + '</a>';
+                        var DMS_title = escapeHTML(item['Title']);
+                        if (item['Title'].length > 80) {
+                            DMS_title = DMS_title.substr(0, 80) + "...";
+                        }
+
+                        timeAgoInWords(Date.parse(item['Modified_date'].replace(/-/g, '/')));
+                        temp_array.push(DMS_URL);
+                        temp_array.push(DMS_title);
+                        temp_array.push(item['Component']);
+                        temp_array.push(timeAgoInWords(Date.parse(item['Modified_date'].replace(/-/g, '/'))));
+                        temp_array.push(timeAgoInWords(Date.parse(item['Submit_date'].replace(/-/g, '/'))));
+                        output_json.push(temp_array)
+                    });
+
+                    $('#table_placeholder').html( '<table cellpadding="0" cellspacing="0" border="0" class="display responsive" id="DMS_Table"></table>' );
+                    $('#DMS_Table').dataTable({
+                        "data": output_json,
+                        "columns": [
+                            { "title": "DMS_ID" },
+                            { "title": "Title" },
+                            { "title": "Component" },
+                            { "title": "Last Modified" },
+                            { "title": "Submit Date" }
+                        ]
+                    });
+                }
+            }
+            else {
+                $("#DMS_update_time").append('<b>Error!</b> Fail to load query result');
+            }
+        }
+
+        function escapeHTML(text) {
+            var replacement = function (ch) {
+                var characterReference = {'"': '&quot;', '&': '&amp;', '\'': '&#39;', '<': '&lt;', '>': '&gt;'};
+                return characterReference[ ch ];
+            };
+            return text.replace(/["&'<>]/g, replacement);
+        }
+
+        function timeAgoInWords(date) {
+            try {
+                var now = Math.ceil(Number(new Date()) / 1000),
+                        dateTime = Math.ceil(Number(new Date(date)) / 1000),
+                        diff = now - dateTime,
+                        str;
+                if (diff < 60 * 60) {  // less than 1 hour
+                    str = String(Math.ceil(diff / (60)));
+                    return str + (str == "1" ? ' minute' : ' minutes') + ' ago';
+                } else if (diff < 60 * 60 * 24) { // less than 1 day
+                    str = String(Math.ceil(diff / (60 * 60)));
+                    return str + (str == "1" ? ' hour' : ' hours') + ' ago';
+                } else if (diff < 60 * 60 * 24 * 31) {  // less than 1 month
+                    str = String(Math.ceil(diff / (60 * 60 * 24)));
+                    return str + (str == "1" ? ' day' : ' days') + ' ago';
+                } else if (diff < 60 * 60 * 24 * 365) {  // less than 1 year
+                    str = String(Math.ceil(diff / (60 * 60 * 24 * 31)));
+                    return str + (str == "1" ? ' month' : ' months') + ' ago';
+                } else { // more than 1 year
+                    str = String(Math.ceil(diff / (60 * 60 * 24 * 365) - 1.0));
+                    return str + (str == "1" ? ' year' : ' years') + ' ago';
+                }
+            } catch (e) {
+                return '';
+            }
+        }
+    </script>
+
+
+</head>
+<body>
+<h1 id="Page_Title">Query for </h1>
+
+<div id="DMS_update_time"></div>
+<br><br>
+
+<div id="table_placeholder"></div>
+<div id="footer_comment"></div>
+</body>
+</html>

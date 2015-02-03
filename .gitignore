@@ -1,0 +1,4 @@
+node_modules/
+test/
+memo/
+debug.log

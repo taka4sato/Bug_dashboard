@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>List of  current queries</title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            var current_path =  window.location.protocol + "//" + window.location.hostname + "/v1/query";
+            $("#Latest_10_POST a").attr("href", current_path)
+        });
+    </script>
+
+</head>
+<body>
+<h1>List of  current queries</h1>
+
+<table style="float:left; width: 50%">
+    <tr>
+        <td> <b>Query Key path</b> </td>
+        <td> <b># of samples </b> </td>
+        <td> <b>Link</b> </td>
+    </tr>
+
+    <% for(var i=0; i < query_result.length; i++) { %>
+    <tr>
+        <td> <%= query_result[i]['query_key'] %></td>
+        <td> <%= query_result[i]['num'] %></td>
+        <td><a href="<%= query_result[i]['URL'] %>" TARGET="_blank">link to detail</a></td>
+    </tr>
+    <% } %>
+</table>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<h1>Other list</h1>
+<ul>
+    <li><div id="Latest_10_POST"><a href="" TARGET="_blank">Show latest 10 POST JSON</a></div>
+</ul>
+
+
+
+</body>
+</html>

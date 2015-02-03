@@ -1,0 +1,10 @@
+body {
+    font-size: 0.85em;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+.underline { border-bottom:solid 2px #000000;}
+.less_than_1day { color:red border-bottom:solid 2px #000000;}
+
+a {
+  color: #00B7FF;
+}
