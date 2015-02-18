@@ -5,9 +5,10 @@ mongodb = require("mongodb")
  Common function related to mongo DB.
 ###
 
+mongo_url = process.env.MONGO_HOST or 'localhost:27017'
 exports.open_db = (database_name) ->
   new promise((resolve, reject) ->
-    mongodb.MongoClient.connect "mongodb://localhost:27017/" + database_name, (error, database) ->
+    mongodb.MongoClient.connect 'mongodb://' + mongo_url + '/' + database_name, (error, database) ->
       unless error
         resolve database
       else

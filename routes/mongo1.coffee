@@ -8,9 +8,11 @@ router = express.Router()
   Test page.. no specific function
 ###
 
+mongo_url = process.env.MONGO_HOST or 'localhost:27017'
+
 open_db = (database_name) ->
   new promise((resolve, reject) ->
-    mongodb.MongoClient.connect 'mongodb://localhost:27017/' + database_name, (error, database) ->
+    mongodb.MongoClient.connect 'mongodb://' + mongo_url + '/' + database_name, (error, database) ->
       if error
         reject error
       else
@@ -47,7 +49,7 @@ misc = ->
   DB_name = 'posttest'
   Collection_name = 'dms_test'
 
-  mongodb.MongoClient.connect 'mongodb://localhost:27017/' + DB_name, (err, database) ->
+  mongodb.MongoClient.connect 'mongodb://' + mongo_url + '/' + DB_name, (err, database) ->
     if err
       logger.error err
       res.end 'GET : connect fail to db : ' + DB_name
@@ -106,7 +108,7 @@ router.get '/', (req, res) ->
   Coll_name = 'dms_test'
   open_db = (database_name) ->
     new promise((resolve, reject) ->
-      mongodb.MongoClient.connect 'mongodb://localhost:27017/' + database_name, (error, database) ->
+      mongodb.MongoClient.connect 'mongodb://' + mongo_url + '/' + database_name, (error, database) ->
         if error
           reject error
         else
