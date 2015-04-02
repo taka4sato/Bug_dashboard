@@ -5,6 +5,8 @@ plumber    = require 'gulp-plumber'
 paths =
   src:
     coffee: './public/javascripts'
+  dest:
+    coffee: './public/javascripts'
 
 gulp.task 'coffee', ()->
   gulp.src ["#{paths.src.coffee}/**/*.coffee"]
