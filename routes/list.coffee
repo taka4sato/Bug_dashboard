@@ -26,6 +26,7 @@ router.get '/', (req, res) ->
       target_URL = req.protocol + '://' + req.get('host') + '/v1/query?query_key=' + encodeURIComponent(result[count]['_id'])
       output.push 'query_key': result[count]['_id'], 'num': result[count]['count'], 'URL': target_URL
     logger.debug output
+    res.set 'Cache-Control': 'no-cache, max-age=0'
     res.render 'list', query_result: output
     return)
   .catch (error) ->

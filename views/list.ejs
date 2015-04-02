@@ -7,9 +7,8 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-
-            var current_path =  window.location.protocol + "//" + window.location.hostname + "/v1/query";
-            $("#Latest_10_POST a").attr("href", current_path)
+            var current_path =  window.location.protocol + "//" + window.location.host + "/v1/query";
+          $("#Latest_10_POST a").attr("href", current_path)
         });
     </script>
 
@@ -35,10 +34,8 @@
 <br>
 <br>
 <br>
-<br>
-<br>
-<br>
-<br>
+<br clear="left">
+<hr>
 <h1>Other list</h1>
 <ul>
     <li><div id="Latest_10_POST"><a href="" TARGET="_blank">Show latest 10 POST JSON</a></div>

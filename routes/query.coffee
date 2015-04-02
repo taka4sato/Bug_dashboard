@@ -21,7 +21,7 @@ router.get '/', (req, res) ->
       mongo_query.dump_one database, Collection_name, path)
     .then((items) ->
       res.set 'Content-Type': 'application/json; charset=utf-8'
-      res.set 'Cache-Control': 'max-age=0'
+      res.set 'Cache-Control': 'no-cache, max-age=0'
       res.end JSON.stringify(items)
       return)
     .catch (error) ->
@@ -34,7 +34,7 @@ router.get '/', (req, res) ->
       mongo_query.dump_latest_items database, Collection_name, 10)
     .then((items) ->
       res.set 'Content-Type': 'application/json; charset=utf-8'
-      res.set 'Cache-Control': 'max-age=0'
+      res.set 'Cache-Control': 'no-cache, max-age=0'
       res.end JSON.stringify(items)
       return)
     .catch (error) ->
@@ -43,7 +43,7 @@ router.get '/', (req, res) ->
       return
   else
     path = req.query['query_key']
-    res.set 'Cache-Control': 'max-age=0'
+    res.set 'Cache-Control': 'no-cache, max-age=0'
     res.render 'query', title: encodeURIComponent(path)
     return
 

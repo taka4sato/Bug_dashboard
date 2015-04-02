@@ -13,7 +13,7 @@
         $(document).ready(function () {
             var queryKey = "<%= title %>";
             $("#Page_Title").append('<span class="underline">' + decodeURIComponent(queryKey) + '</span>');
-            var targetURL = window.location.protocol + "//" + window.location.hostname + "/v1/query?query_key=" + queryKey + "&format=json";
+            var targetURL = window.location.protocol + "//" + window.location.host + "/v1/query?query_key=" + queryKey + "&format=json";
             console.log(targetURL);
             $.getJSON(targetURL, function (json) {
                 console.log(json);
