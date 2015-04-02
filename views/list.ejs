@@ -1,46 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>List of  current queries</title>
-    <link rel='stylesheet' href='/stylesheets/style.css'/>
-    <script type="text/javascript" src="/javascripts/jquery.min.js"></script>
+  <title>List of  current queries</title>
+  <link rel='stylesheet' href='/stylesheets/style.css'/>
+  <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
 
-    <script type="text/javascript">
-        $(document).ready(function(){
-            var current_path =  window.location.protocol + "//" + window.location.host + "/v1/query";
-          $("#Latest_10_POST a").attr("href", current_path)
+  <script type="text/javascript" src="/javascripts/jquery.min.js"></script>
+  <script type='text/javascript' src='/javascripts/jquery.dataTables.min.js'></script>
+  <link rel="stylesheet" media="all" href="/stylesheets/jquery.dataTables.min.css"/>
+
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+      var targetURL = window.location.protocol + "//" + window.location.host + "/v1/list?format=json";
+      $("#Latest_10_POST a").attr("href", window.location.protocol + "//" + window.location.host + "/v1/query")
+
+      return $.getJSON(targetURL, function(json) {
+        createTable(json)
+      });
+    });
+
+    createTable = function(json) {
+      if (json.length === 0){
+        console.log('no item found');
+
+      }
+      else{
+        output_json = [];
+        $.each(json, function(i, item) {
+          var QueryKey, NumOfItem, QueryLink;
+          temp_array = [];
+
+          QueryKey  = escapeHTML(item["query_key"]);
+          NumOfItem = item["num"];
+          QueryLink = '<a href=\"' + item["URL"] +  '\" TARGET="_blank">link to detail</a>';
+
+          if (QueryKey.indexOf("Public Queries/") == 0) {
+            console.log (QueryKey + 'starts with Public Queries/ YO!');
+            QueryKey = QueryKey.slice(15);
+
+          }
+          temp_array.push(QueryKey);
+          temp_array.push(NumOfItem);
+          temp_array.push(QueryLink);
+          return output_json.push(temp_array);
         });
-    </script>
+        $("#table_placeholder").html("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>");
+        return $("#DMS_Table").dataTable({
+          data: output_json,
+          pageLength: 50,
+          autoWidth: false,
+          columns: [
+            {
+              title: "Query key/Name"
+            }, {
+              title: "# of samples",
+              width: "80px"
+            }, {
+              title: "Link",
+              width: "60px"
+            }
+          ]
+        });
+      }
+    };
+
+    escapeHTML = function(text) {
+      var replacement;
+      replacement = function(ch) {
+        var characterReference;
+        characterReference = {
+          "\"": "&quot;",
+          "&": "&amp;",
+          "'": "&#39;",
+          "<": "&lt;",
+          ">": "&gt;"
+        };
+        return characterReference[ch];
+      };
+      return text.replace(/["&'<>]/g, replacement);
+    };
+  </script>
 
 </head>
 <body>
 <h1>List of  current queries</h1>
-
-<table style="float:left; width: 50%">
-    <tr>
-        <td> <b>Query Key path</b> </td>
-        <td> <b># of samples </b> </td>
-        <td> <b>Link</b> </td>
-    </tr>
-
-    <% for(var i=0; i < query_result.length; i++) { %>
-    <tr>
-        <td> <%= query_result[i]['query_key'] %></td>
-        <td> <%= query_result[i]['num'] %></td>
-        <td><a href="<%= query_result[i]['URL'] %>" TARGET="_blank">link to detail</a></td>
-    </tr>
-    <% } %>
-</table>
-<br>
-<br>
-<br>
+<div id="table_placeholder" style="float:left; width: 70%"></div>
 <br clear="left">
 <hr>
 <h1>Other list</h1>
 <ul>
-    <li><div id="Latest_10_POST"><a href="" TARGET="_blank">Show latest 10 POST JSON</a></div>
+  <li><div id="Latest_10_POST"><a href="" TARGET="_blank">Show latest 10 POST JSON</a></div>
 </ul>
-
+<div id="footer_comment"></div>
 
 
 </body>
