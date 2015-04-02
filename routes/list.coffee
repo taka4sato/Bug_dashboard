@@ -12,6 +12,7 @@ mongo_query = require('./mongo_query')
 DB_name = 'posttest'
 Collection_name = 'dms_test'
 router.get '/', (req, res) ->
+  logger.debug req
   mongo_query.open_db(DB_name).then((database) ->
     mongo_query.check_collection_exist database, Collection_name)
   .then((database) ->
