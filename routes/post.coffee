@@ -21,17 +21,19 @@ router.post '/', (req, res) ->
     mongo_query.check_collection_exist database, Collection_name)
   .then((database) ->
     mongo_query.post_item database, Collection_name, req.body)
-  .then((database) ->
-    mongo_query.dump_latest_items database, Collection_name, 5)
-  .then((items) ->
+
+  ##.then((database) ->
+  ##  mongo_query.dump_latest_items database, Collection_name, 5)
+  ## .then((items) ->
+  .then(() ->
+
     res.set 'Content-Type': 'application/json; charset=utf-8'
     res.set 'Cache-Control': 'max-age=0'
     logger.debug 'POST insert done successfully'
-    logger.debug 'Latest 5 POST data'
-    logger.debug '-------------------------------------'
-    logger.debug items
-    logger.debug '-------------------------------------'
-    res.end JSON.stringify(items)
+    if req.body.hasOwnProperty("query_key") and req.body.hasOwnProperty("DMS_count")
+      logger.debug 'DMS item num = ' + req.body.DMS_count + '  Query key = ' + req.body.query_key
+
+    res.end JSON.stringify(req.body)
     return)
   .catch (error) ->
     logger.error error
