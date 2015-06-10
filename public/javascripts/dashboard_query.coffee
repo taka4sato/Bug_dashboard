@@ -20,12 +20,12 @@ createTable = (json, queryKey) ->
         DMS_URL = "<a href=\"http://ffs.sonyericsson.net/WebPages/Search.aspx?q=1___" + item["DMS_ID"] + "___issue\" TARGET=\"_blank\">" + item["DMS_ID"] + "</a>"
         DMS_title = escapeHTML(item["Title"])
         DMS_title = DMS_title.substr(0, 120) + "..."  if item["Title"].length > 80
-        timeAgoInWords Date.parse(item["Modified_date"].replace(/-/g, "/"))
+        ## timeAgoInWords Date.parse(item["Modified_date"].replace(/-/g, "/"))
         temp_array.push DMS_URL
         temp_array.push DMS_title
         temp_array.push item["Component"]
-        temp_array.push timeAgoInWords(Date.parse(item["Modified_date"].replace(/-/g, "/")))
-        temp_array.push timeAgoInWords(Date.parse(item["Submit_date"].replace(/-/g, "/")))
+        temp_array.push item["Modified_date"]
+        temp_array.push item["Submit_date"]
         output_json.push temp_array
 
       $("#table_placeholder").html "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>"
@@ -48,9 +48,27 @@ createTable = (json, queryKey) ->
           title: "Submit Date"
           width: "60px"
         ]
+        columnDefs: [ {
+          targets: 3
+          render: (data, type, row) ->
+            highlightDate(data)
+        },{
+          targets: 4
+          render: (data, type, row) ->
+            highlightDate(data)
+        }]
 
   else
     $("#DMS_update_time").append "<b>Error!</b> Fail to load query result"
+
+highlightDate = (text_string) ->
+  timeDiff =  timeDelta(Date.parse(text_string.replace(/-/g, "/")))
+  timeString = timeAgoInWords(Date.parse(text_string.replace(/-/g, "/")))
+  if timeDiff < 60 * 60 * 24 * 31 * 3 # less than 1 day
+    return text_string + '<font color="#ff0000"><b>' + timeString + '</b></font>'
+  else
+    return text_string + timeString
+
 
 escapeHTML = (text) ->
   replacement = (ch) ->
@@ -63,11 +81,17 @@ escapeHTML = (text) ->
     characterReference[ch]
   text.replace /["&'<>]/g, replacement
 
+timeDelta = (date) ->
+  try
+    now = Math.ceil(Number(new Date().getTime()) / 1000)
+    dateTime = Math.ceil(Number(new Date(date)) / 1000)
+    return (now - dateTime)
+  catch e
+    return ""
+
 timeAgoInWords = (date) ->
   try
-    now = Math.ceil(Number(new Date()) / 1000)
-    dateTime = Math.ceil(Number(new Date(date)) / 1000)
-    diff = now - dateTime
+    diff = timeDelta(date)
     str = undefined
     if diff < 60 * 60 # less than 1 hour
       str = String(Math.ceil(diff / (60)))

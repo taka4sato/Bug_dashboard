@@ -1,4 +1,4 @@
-var createTable, escapeHTML, startpoint_dashboard_query, timeAgoInWords;
+var createTable, escapeHTML, highlightDate, startpoint_dashboard_query, timeAgoInWords, timeDelta;
 
 startpoint_dashboard_query = function(queryKey) {
   var targetURL;
@@ -29,12 +29,11 @@ createTable = function(json, queryKey) {
         if (item["Title"].length > 80) {
           DMS_title = DMS_title.substr(0, 120) + "...";
         }
-        timeAgoInWords(Date.parse(item["Modified_date"].replace(/-/g, "/")));
         temp_array.push(DMS_URL);
         temp_array.push(DMS_title);
         temp_array.push(item["Component"]);
-        temp_array.push(timeAgoInWords(Date.parse(item["Modified_date"].replace(/-/g, "/"))));
-        temp_array.push(timeAgoInWords(Date.parse(item["Submit_date"].replace(/-/g, "/"))));
+        temp_array.push(item["Modified_date"]);
+        temp_array.push(item["Submit_date"]);
         return output_json.push(temp_array);
       });
       $("#table_placeholder").html("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>");
@@ -58,11 +57,35 @@ createTable = function(json, queryKey) {
             title: "Submit Date",
             width: "60px"
           }
+        ],
+        columnDefs: [
+          {
+            targets: 3,
+            render: function(data, type, row) {
+              return highlightDate(data);
+            }
+          }, {
+            targets: 4,
+            render: function(data, type, row) {
+              return highlightDate(data);
+            }
+          }
         ]
       });
     }
   } else {
     return $("#DMS_update_time").append("<b>Error!</b> Fail to load query result");
+  }
+};
+
+highlightDate = function(text_string) {
+  var timeDiff, timeString;
+  timeDiff = timeDelta(Date.parse(text_string.replace(/-/g, "/")));
+  timeString = timeAgoInWords(Date.parse(text_string.replace(/-/g, "/")));
+  if (timeDiff < 60 * 60 * 24 * 31 * 3) {
+    return text_string + '<font color="#ff0000"><b>' + timeString + '</b></font>';
+  } else {
+    return text_string + timeString;
   }
 };
 
@@ -82,12 +105,22 @@ escapeHTML = function(text) {
   return text.replace(/["&'<>]/g, replacement);
 };
 
-timeAgoInWords = function(date) {
-  var dateTime, diff, e, now, str;
+timeDelta = function(date) {
+  var dateTime, e, now;
   try {
-    now = Math.ceil(Number(new Date()) / 1000);
+    now = Math.ceil(Number(new Date().getTime()) / 1000);
     dateTime = Math.ceil(Number(new Date(date)) / 1000);
-    diff = now - dateTime;
+    return now - dateTime;
+  } catch (_error) {
+    e = _error;
+    return "";
+  }
+};
+
+timeAgoInWords = function(date) {
+  var diff, e, str;
+  try {
+    diff = timeDelta(date);
     str = void 0;
     if (diff < 60 * 60) {
       str = String(Math.ceil(diff / 60.));
