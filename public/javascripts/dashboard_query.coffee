@@ -94,19 +94,19 @@ timeAgoInWords = (date) ->
     diff = timeDelta(date)
     str = undefined
     if diff < 60 * 60 # less than 1 hour
-      str = String(Math.ceil(diff / (60)))
-      return str + ((if str is "1" then " minute" else " minutes")) + " ago"
+      return "less than one hour"
     else if diff < 60 * 60 * 24 # less than 1 day
-      str = String(Math.ceil(diff / (60 * 60)))
-      return str + ((if str is "1" then " hour" else " hours")) + " ago"
+#      str = String(Math.ceil(diff / (60 * 60)))
+#      return str + ((if str is "1" then " hour" else " hours")) + " ago"
+      return "less than one day"
     else if diff < 60 * 60 * 24 * 31 # less than 1 month
-      str = String(Math.ceil(diff / (60 * 60 * 24)))
+      str = String(Math.floor(diff / (60 * 60 * 24)))
       return str + ((if str is "1" then " day" else " days")) + " ago"
     else if diff < 60 * 60 * 24 * 365 # less than 1 year
-      str = String(Math.ceil(diff / (60 * 60 * 24 * 31)))
+      str = String(Math.floor(diff / (60 * 60 * 24 * 31)))
       return str + ((if str is "1" then " month" else " months")) + " ago"
     else # more than 1 year
-      str = String(Math.ceil(diff / (60 * 60 * 24 * 365) - 1.0))
+      str = String(Math.floor(diff / (60 * 60 * 24 * 365) - 1.0))
       return str + ((if str is "1" then " year" else " years")) + " ago"
   catch e
     return ""

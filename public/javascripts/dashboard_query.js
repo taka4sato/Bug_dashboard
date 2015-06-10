@@ -123,19 +123,17 @@ timeAgoInWords = function(date) {
     diff = timeDelta(date);
     str = void 0;
     if (diff < 60 * 60) {
-      str = String(Math.ceil(diff / 60.));
-      return str + (str === "1" ? " minute" : " minutes") + " ago";
+      return "less than one hour";
     } else if (diff < 60 * 60 * 24) {
-      str = String(Math.ceil(diff / (60 * 60)));
-      return str + (str === "1" ? " hour" : " hours") + " ago";
+      return "less than one day";
     } else if (diff < 60 * 60 * 24 * 31) {
-      str = String(Math.ceil(diff / (60 * 60 * 24)));
+      str = String(Math.floor(diff / (60 * 60 * 24)));
       return str + (str === "1" ? " day" : " days") + " ago";
     } else if (diff < 60 * 60 * 24 * 365) {
-      str = String(Math.ceil(diff / (60 * 60 * 24 * 31)));
+      str = String(Math.floor(diff / (60 * 60 * 24 * 31)));
       return str + (str === "1" ? " month" : " months") + " ago";
     } else {
-      str = String(Math.ceil(diff / (60 * 60 * 24 * 365) - 1.0));
+      str = String(Math.floor(diff / (60 * 60 * 24 * 365) - 1.0));
       return str + (str === "1" ? " year" : " years") + " ago";
     }
   } catch (_error) {
