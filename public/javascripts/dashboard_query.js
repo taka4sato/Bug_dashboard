@@ -128,10 +128,10 @@ timeAgoInWords = function(date, flag) {
     str = void 0;
     if (diff < 60 * 60) {
       str = String(Math.floor(diff / 60.));
-      return (flag === 1 ? str + " minutes ago" : "less than one hour");
+      return (flag === 1 ? str + " minutes ago" : "< 1h");
     } else if (diff < 60 * 60 * 24) {
       str = String(Math.floor(diff / (60 * 60)));
-      return (flag === 1 ? str + (str === "1" ? " hour" : " hours") + " ago" : "less than one day");
+      return (flag === 1 ? str + (str === "1" ? " hour" : " hours") + " ago" : "< 24h");
     } else if (diff < 60 * 60 * 24 * 31) {
       str = String(Math.floor(diff / (60 * 60 * 24)));
       return str + (str === "1" ? " day" : " days") + " ago";

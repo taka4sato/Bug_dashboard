@@ -99,11 +99,11 @@ timeAgoInWords = (date, flag) ->
 
     if diff < 60 * 60 # less than 1 hour
       str = String(Math.floor(diff / (60)))
-      return ((if flag is 1 then str + " minutes ago" else "less than one hour"))
+      return ((if flag is 1 then str + " minutes ago" else "< 1h"))
 
     else if diff < 60 * 60 * 24 # less than 1 day
       str = String(Math.floor(diff / (60 * 60)))
-      return ((if flag is 1 then str + ((if str is "1" then " hour" else " hours")) + " ago" else "less than one day"))
+      return ((if flag is 1 then str + ((if str is "1" then " hour" else " hours")) + " ago" else "< 24h"))
 
     else if diff < 60 * 60 * 24 * 31 # less than 1 month
       str = String(Math.floor(diff / (60 * 60 * 24)))
