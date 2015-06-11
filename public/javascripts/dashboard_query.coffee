@@ -8,7 +8,7 @@ startpoint_dashboard_query = (queryKey) ->
 
 createTable = (json, queryKey) ->
   if json.length isnt 0 and json[0].hasOwnProperty("query_date")
-    delta_time = timeAgoInWords(Date.parse(String(json[0].query_date).replace(/-/g, "/")))
+    delta_time = timeAgoInWords(Date.parse(String(json[0].query_date).replace(/-/g, "/")), 1)
     $("#DMS_update_time").append "(Query result as of <span class=\"underline\"><b>" + delta_time + "</b></span>)"
     if json[0].DMS_count is 0
       $("#footer_comment").append "<b>No DMS exists</b> for this query"
@@ -20,7 +20,6 @@ createTable = (json, queryKey) ->
         DMS_URL = "<a href=\"http://ffs.sonyericsson.net/WebPages/Search.aspx?q=1___" + item["DMS_ID"] + "___issue\" TARGET=\"_blank\">" + item["DMS_ID"] + "</a>"
         DMS_title = escapeHTML(item["Title"])
         DMS_title = DMS_title.substr(0, 120) + "..."  if item["Title"].length > 80
-        ## timeAgoInWords Date.parse(item["Modified_date"].replace(/-/g, "/"))
         temp_array.push DMS_URL
         temp_array.push DMS_title
         temp_array.push item["Component"]
@@ -63,11 +62,11 @@ createTable = (json, queryKey) ->
 
 highlightDate = (text_string) ->
   timeDiff =  timeDelta(Date.parse(text_string.replace(/-/g, "/")))
-  timeString = timeAgoInWords(Date.parse(text_string.replace(/-/g, "/")))
-  if timeDiff < 60 * 60 * 24 * 31 * 3 # less than 1 day
-    return text_string + '<font color="#ff0000"><b>' + timeString + '</b></font>'
+  timeString = timeAgoInWords(Date.parse(text_string.replace(/-/g, "/")), 0)
+  if timeDiff < 60 * 60 * 24 * 31 * 3 # less than 3 month
+    return '<font color="#ff0000"><b>' + timeString + '</b></font>'
   else
-    return text_string + timeString
+    return timeString
 
 
 escapeHTML = (text) ->
@@ -89,24 +88,30 @@ timeDelta = (date) ->
   catch e
     return ""
 
-timeAgoInWords = (date) ->
+timeAgoInWords = (date, flag) ->
   try
     diff = timeDelta(date)
     str = undefined
+
     if diff < 60 * 60 # less than 1 hour
-      return "less than one hour"
+      str = String(Math.floor(diff / (60)))
+      return ((if flag is 1 then str + " minutes ago" else "less than one hour"))
+
     else if diff < 60 * 60 * 24 # less than 1 day
-#      str = String(Math.ceil(diff / (60 * 60)))
-#      return str + ((if str is "1" then " hour" else " hours")) + " ago"
-      return "less than one day"
+      str = String(Math.floor(diff / (60 * 60)))
+      return ((if flag is 1 then str + ((if str is "1" then " hour" else " hours")) + " ago" else "less than one day"))
+
     else if diff < 60 * 60 * 24 * 31 # less than 1 month
       str = String(Math.floor(diff / (60 * 60 * 24)))
       return str + ((if str is "1" then " day" else " days")) + " ago"
+
     else if diff < 60 * 60 * 24 * 365 # less than 1 year
       str = String(Math.floor(diff / (60 * 60 * 24 * 31)))
       return str + ((if str is "1" then " month" else " months")) + " ago"
+
     else # more than 1 year
       str = String(Math.floor(diff / (60 * 60 * 24 * 365) - 1.0))
       return str + ((if str is "1" then " year" else " years")) + " ago"
+
   catch e
     return ""

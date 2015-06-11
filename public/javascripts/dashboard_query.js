@@ -14,7 +14,7 @@ startpoint_dashboard_query = function(queryKey) {
 createTable = function(json, queryKey) {
   var delta_time, output_json;
   if (json.length !== 0 && json[0].hasOwnProperty("query_date")) {
-    delta_time = timeAgoInWords(Date.parse(String(json[0].query_date).replace(/-/g, "/")));
+    delta_time = timeAgoInWords(Date.parse(String(json[0].query_date).replace(/-/g, "/")), 1);
     $("#DMS_update_time").append("(Query result as of <span class=\"underline\"><b>" + delta_time + "</b></span>)");
     if (json[0].DMS_count === 0) {
       return $("#footer_comment").append("<b>No DMS exists</b> for this query");
@@ -81,11 +81,11 @@ createTable = function(json, queryKey) {
 highlightDate = function(text_string) {
   var timeDiff, timeString;
   timeDiff = timeDelta(Date.parse(text_string.replace(/-/g, "/")));
-  timeString = timeAgoInWords(Date.parse(text_string.replace(/-/g, "/")));
+  timeString = timeAgoInWords(Date.parse(text_string.replace(/-/g, "/")), 0);
   if (timeDiff < 60 * 60 * 24 * 31 * 3) {
-    return text_string + '<font color="#ff0000"><b>' + timeString + '</b></font>';
+    return '<font color="#ff0000"><b>' + timeString + '</b></font>';
   } else {
-    return text_string + timeString;
+    return timeString;
   }
 };
 
@@ -117,15 +117,17 @@ timeDelta = function(date) {
   }
 };
 
-timeAgoInWords = function(date) {
+timeAgoInWords = function(date, flag) {
   var diff, e, str;
   try {
     diff = timeDelta(date);
     str = void 0;
     if (diff < 60 * 60) {
-      return "less than one hour";
+      str = String(Math.floor(diff / 60.));
+      return (flag === 1 ? str + " minutes ago" : "less than one hour");
     } else if (diff < 60 * 60 * 24) {
-      return "less than one day";
+      str = String(Math.floor(diff / (60 * 60)));
+      return (flag === 1 ? str + (str === "1" ? " hour" : " hours") + " ago" : "less than one day");
     } else if (diff < 60 * 60 * 24 * 31) {
       str = String(Math.floor(diff / (60 * 60 * 24)));
       return str + (str === "1" ? " day" : " days") + " ago";
