@@ -30,8 +30,9 @@ createTable = (json, queryKey) ->
       $("#table_placeholder").html "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>"
       $("#DMS_Table").dataTable
         data: output_json
-        pageLength: 50
+        pageLength: 100
         autoWidth: false
+        order: [[4, "desc"]]
         columns: [
           title: "DMS_ID"
           width: "20px"
@@ -47,14 +48,13 @@ createTable = (json, queryKey) ->
           title: "Submit Date"
           width: "60px"
         ]
-        columnDefs: [ {
-          targets: 3
+        columnDefs: [{
+          targets: [3,4]
           render: (data, type, row) ->
-            highlightDate(data)
-        },{
-          targets: 4
-          render: (data, type, row) ->
-            highlightDate(data)
+            if type == "sort"
+              return Date.parse(data.replace(/-/g, "/"))
+            else
+              return highlightDate(data)
         }]
 
   else
@@ -63,8 +63,12 @@ createTable = (json, queryKey) ->
 highlightDate = (text_string) ->
   timeDiff =  timeDelta(Date.parse(text_string.replace(/-/g, "/")))
   timeString = timeAgoInWords(Date.parse(text_string.replace(/-/g, "/")), 0)
-  if timeDiff < 60 * 60 * 24 * 31 * 3 # less than 3 month
-    return '<font color="#ff0000"><b>' + timeString + '</b></font>'
+  if timeDiff < 60 * 60 * 24 # less than 1 day
+    return '<font color="red"><b>' + timeString + '</b></font>'
+  else if timeDiff < 60 * 60 * 24 * 3 # less than 3 days
+    return '<font color="purple"><b>' + timeString + '</b></font>'
+  else if timeDiff < 60 * 60 * 24 * 31 # less than 31 days
+    return '<font color="blue"><b>' + timeString + '</b></font>'
   else
     return timeString
 
@@ -110,7 +114,7 @@ timeAgoInWords = (date, flag) ->
       return str + ((if str is "1" then " month" else " months")) + " ago"
 
     else # more than 1 year
-      str = String(Math.floor(diff / (60 * 60 * 24 * 365) - 1.0))
+      str = String(Math.floor(diff / (60 * 60 * 24 * 365)))
       return str + ((if str is "1" then " year" else " years")) + " ago"
 
   catch e

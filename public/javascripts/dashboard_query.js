@@ -39,8 +39,9 @@ createTable = function(json, queryKey) {
       $("#table_placeholder").html("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>");
       return $("#DMS_Table").dataTable({
         data: output_json,
-        pageLength: 50,
+        pageLength: 100,
         autoWidth: false,
+        order: [[4, "desc"]],
         columns: [
           {
             title: "DMS_ID",
@@ -60,14 +61,13 @@ createTable = function(json, queryKey) {
         ],
         columnDefs: [
           {
-            targets: 3,
+            targets: [3, 4],
             render: function(data, type, row) {
-              return highlightDate(data);
-            }
-          }, {
-            targets: 4,
-            render: function(data, type, row) {
-              return highlightDate(data);
+              if (type === "sort") {
+                return Date.parse(data.replace(/-/g, "/"));
+              } else {
+                return highlightDate(data);
+              }
             }
           }
         ]
@@ -82,8 +82,12 @@ highlightDate = function(text_string) {
   var timeDiff, timeString;
   timeDiff = timeDelta(Date.parse(text_string.replace(/-/g, "/")));
   timeString = timeAgoInWords(Date.parse(text_string.replace(/-/g, "/")), 0);
-  if (timeDiff < 60 * 60 * 24 * 31 * 3) {
-    return '<font color="#ff0000"><b>' + timeString + '</b></font>';
+  if (timeDiff < 60 * 60 * 24) {
+    return '<font color="red"><b>' + timeString + '</b></font>';
+  } else if (timeDiff < 60 * 60 * 24 * 3) {
+    return '<font color="purple"><b>' + timeString + '</b></font>';
+  } else if (timeDiff < 60 * 60 * 24 * 31) {
+    return '<font color="blue"><b>' + timeString + '</b></font>';
   } else {
     return timeString;
   }
@@ -135,7 +139,7 @@ timeAgoInWords = function(date, flag) {
       str = String(Math.floor(diff / (60 * 60 * 24 * 31)));
       return str + (str === "1" ? " month" : " months") + " ago";
     } else {
-      str = String(Math.floor(diff / (60 * 60 * 24 * 365) - 1.0));
+      str = String(Math.floor(diff / (60 * 60 * 24 * 365)));
       return str + (str === "1" ? " year" : " years") + " ago";
     }
   } catch (_error) {
