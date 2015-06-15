@@ -101,22 +101,30 @@ createTable = function(json, queryKey) {
 };
 
 countTag = function(tag_info, meta_info) {
-  console.log("------------");
-  console.log(tag_info);
-  console.log(meta_info);
+  var count;
   if ($.isEmptyObject(tag_info["Tag_info"])) {
-    console.log("------------");
     return "";
   } else {
-    console.log(tag_info["Tag_info"][0]);
-    console.log("------------");
-    return "<div class='details-control'><img border='0' src='../images/empty.gif'> </img></div>";
+    count = 0;
+    $.each(tag_info["Tag_info"], function(i, item) {
+      return count = i;
+    });
+    count = count + 1;
+    return "<div class='details-control'><img border='0' src='../images/empty.gif'>" + count + "</img></div>";
   }
 };
 
-addDetailTagInfo = function(row_data) {
-  console.log(row_data);
-  return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' + '<tr>' + '<td>Full name:</td>' + '<td>' + row_data.Project + '</td>' + '</tr>' + '<tr>' + '<td>Extension number:</td>' + '<td>' + row_data.State + '</td>' + '</tr>' + '<tr>' + '<td>Extra info:</td>' + '<td>And any further details here (images etc)...</td>' + '</tr>' + '</table>';
+addDetailTagInfo = function(tag_info) {
+  var tag_string;
+  console.log(tag_info["Tag_info"]);
+  tag_string = "";
+  $.each(tag_info["Tag_info"], function(i, item) {
+    console.log(item);
+    console.log(item["Tag"]);
+    console.log(item["DeliveryBranch"]);
+    return tag_string += "<tr><td>" + item["DeliveryBranch"] + "</td><td>" + item["Tag"] + "</td><td>" + "TBD" + "</td></tr>";
+  });
+  return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' + '<tr><td>Tag Branch:</td><td>Tag Target</td><td>Deadline</td></tr>' + tag_string + '</table>';
 };
 
 optimezeTitleLength = function(text_string) {

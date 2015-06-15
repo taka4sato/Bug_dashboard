@@ -86,34 +86,35 @@ createTable = (json, queryKey) ->
     $("#DMS_update_time").append "<b>Error!</b> Fail to load query result"
 
 countTag = (tag_info, meta_info) ->
-  console.log "------------"
+  #console.log "------------"
   #console.log tag_info["Tag_info"]
-  console.log tag_info
-  console.log meta_info
+  #console.log tag_info
+  #console.log meta_info
   if $.isEmptyObject(tag_info["Tag_info"])    # no tag
-    console.log "------------"
+    #console.log "------------"
     return ""
   else                                        # if any tag
-    console.log tag_info["Tag_info"][0]
-    console.log "------------"
-    return "<div class='details-control'><img border='0' src='../images/empty.gif'> </img></div>"
+    #console.log tag_info["Tag_info"][0]
+    #console.log "------------"
+    count = 0
+    $.each tag_info["Tag_info"], (i, item) ->
+      count = i
+    count = count + 1
+    return "<div class='details-control'><img border='0' src='../images/empty.gif'>" + count + "</img></div>"
 
 
-addDetailTagInfo = (row_data) ->
-  console.log(row_data)
+addDetailTagInfo = (tag_info) ->
+  console.log(tag_info["Tag_info"])
+  tag_string = ""
+  $.each tag_info["Tag_info"], (i, item) ->
+    console.log item
+    console.log item["Tag"]
+    console.log item["DeliveryBranch"]
+    tag_string += "<tr><td>" + item["DeliveryBranch"] + "</td><td>" + item["Tag"] + "</td><td>" + "TBD" + "</td></tr>"
+
   return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-    '<tr>'+
-    '<td>Full name:</td>'+
-    '<td>'+row_data.Project+'</td>'+
-    '</tr>'+
-    '<tr>'+
-    '<td>Extension number:</td>'+
-    '<td>'+row_data.State+'</td>'+
-    '</tr>'+
-    '<tr>'+
-    '<td>Extra info:</td>'+
-    '<td>And any further details here (images etc)...</td>'+
-    '</tr>'+
+    '<tr><td>Tag Branch:</td><td>Tag Target</td><td>Deadline</td></tr>'+
+    tag_string +
     '</table>'
 
 optimezeTitleLength = (text_string) ->
