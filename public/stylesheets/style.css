@@ -1,9 +1,19 @@
 body {
-    font-size: 0.85em;
-    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 0.90em;
+    font-family: "segoe UI", "Roboto Condensed", "Lucida Grande", "Hiragino Kaku Gothic ProN", YuGothic, Meiryo, sans-serif;
 }
 .underline { border-bottom:solid 2px #000000;}
 .less_than_1day { color:red border-bottom:solid 2px #000000;}
+
+div.details-control {
+    background: url('../images/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+
+tr.shown div.details-control {
+    background: url('../images/details_close.png') no-repeat center center;
+}
+
 
 a {
   color: #00B7FF;

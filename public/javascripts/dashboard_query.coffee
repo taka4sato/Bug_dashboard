@@ -3,7 +3,7 @@ startpoint_dashboard_query = (queryKey) ->
   targetURL = window.location.protocol + "//" + window.location.host + "/v1/query?query_key=" + queryKey + "&format=json"
   console.log targetURL
   $.getJSON targetURL, (json) ->
-    console.log json
+    ## console.log json
     createTable json, queryKey
 
 createTable = (json, queryKey) ->
@@ -13,43 +13,57 @@ createTable = (json, queryKey) ->
     if json[0].DMS_count is 0
       $("#footer_comment").append "<b>No DMS exists</b> for this query"
     else
-      output_json = []
-      $.each json[0].DMS_List, (i, item) ->
-        console.log item
-        temp_array = []
-        DMS_URL = "<a href=\"http://ffs.sonyericsson.net/WebPages/Search.aspx?q=1___" + item["DMS_ID"] + "___issue\" TARGET=\"_blank\">" + item["DMS_ID"] + "</a>"
-        DMS_title = escapeHTML(item["Title"])
-        DMS_title = DMS_title.substr(0, 120) + "..."  if item["Title"].length > 80
-        temp_array.push DMS_URL
-        temp_array.push DMS_title
-        temp_array.push item["Component"]
-        temp_array.push item["Modified_date"]
-        temp_array.push item["Submit_date"]
-        output_json.push temp_array
+    ##$.each json[0].DMS_List, (i, item) ->
+    ##  console.log item
 
       $("#table_placeholder").html "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>"
-      $("#DMS_Table").dataTable
-        data: output_json
+      dms_Table = $("#DMS_Table").DataTable
+        data: json[0].DMS_List
         pageLength: 100
         autoWidth: false
         order: [[4, "desc"]]
         columns: [
+          data : "DMS_ID"
           title: "DMS_ID"
           width: "20px"
         ,
+          data : "Title"
           title: "Title"
         ,
+          data : "Component"
           title: "Component"
           width: "80px"
         ,
-          title: "Last Modified"
-          width: "60px"
+          data: null
+          title: "Tag"
+          width: "5px"
+          #className: 'details-control'
+          orderable: false
+          defaultContent: ''
         ,
+          data : "Modified_date"
+          title: "Last Modified"
+          width: "80px"
+        ,
+          data : "Submit_date"
           title: "Submit Date"
-          width: "60px"
+          width: "80px"
         ]
         columnDefs: [{
-          targets: [3,4]
+          targets: [0]
+          render: (data, type, row) ->
+            return "<a href=\"http://ffs.sonyericsson.net/WebPages/Search.aspx?q=1___" + data + "___issue\" TARGET=\"_blank\">" + data + "</a>"
+        },{
+          targets: [1]
+          render: (data, type, row) ->
+            return optimezeTitleLength(data)
+        },{
+          targets: [3]
+          render: (data, type, row, meta) ->
+            if type == "display"
+              return countTag(data, meta)
+        },{
+          targets: [4,5]
           render: (data, type, row) ->
             if type == "sort"
               return Date.parse(data.replace(/-/g, "/"))
@@ -57,8 +71,57 @@ createTable = (json, queryKey) ->
               return highlightDate(data)
         }]
 
+      $('#DMS_Table tbody').on 'click', 'div.details-control', ->
+        tr = $(this).closest('tr')
+        row = dms_Table.row(tr)
+
+        if row.child.isShown()  # This row is already open - will close it
+          row.child.hide()
+          tr.removeClass 'shown'
+        else                    # Will open this row
+          row.child(addDetailTagInfo(row.data())).show()
+          tr.addClass 'shown'
+
   else
     $("#DMS_update_time").append "<b>Error!</b> Fail to load query result"
+
+countTag = (tag_info, meta_info) ->
+  console.log "------------"
+  #console.log tag_info["Tag_info"]
+  console.log tag_info
+  console.log meta_info
+  if $.isEmptyObject(tag_info["Tag_info"])    # no tag
+    console.log "------------"
+    return ""
+  else                                        # if any tag
+    console.log tag_info["Tag_info"][0]
+    console.log "------------"
+    return "<div class='details-control'><img border='0' src='../images/empty.gif'> </img></div>"
+
+
+addDetailTagInfo = (row_data) ->
+  console.log(row_data)
+  return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+    '<tr>'+
+    '<td>Full name:</td>'+
+    '<td>'+row_data.Project+'</td>'+
+    '</tr>'+
+    '<tr>'+
+    '<td>Extension number:</td>'+
+    '<td>'+row_data.State+'</td>'+
+    '</tr>'+
+    '<tr>'+
+    '<td>Extra info:</td>'+
+    '<td>And any further details here (images etc)...</td>'+
+    '</tr>'+
+    '</table>'
+
+optimezeTitleLength = (text_string) ->
+    escapted_Title = escapeHTML(text_string)
+    if text_string.length > 80
+      return escapted_Title.substr(0, 120) + "..."
+    else
+      return  escapted_Title
 
 highlightDate = (text_string) ->
   timeDiff =  timeDelta(Date.parse(text_string.replace(/-/g, "/")))
@@ -71,7 +134,6 @@ highlightDate = (text_string) ->
     return '<font color="blue"><b>' + timeString + '</b></font>'
   else
     return timeString
-
 
 escapeHTML = (text) ->
   replacement = (ch) ->
