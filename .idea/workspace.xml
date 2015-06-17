@@ -41,7 +41,7 @@
         <entry file="file://$PROJECT_DIR$/public/javascripts/dashboard_query.coffee">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="-2.903226" vertical-offset="0" max-vertical-offset="2862">
-              <caret line="5" column="7" selection-start-line="5" selection-start-column="7" selection-end-line="5" selection-end-column="7" />
+              <caret line="5" column="31" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
               <folding>
                 <element signature="e#5180#5348#0" expanded="false" />
                 <element signature="e#5385#6359#0" expanded="false" />
@@ -56,9 +56,7 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="738">
               <caret line="5" column="29" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-              <folding>
-                <marker date="1434516578364" expanded="true" signature="620:865" placeholder="..." />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -66,28 +64,38 @@
       <file leaf-file-name="query.coffee" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/query.coffee">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.032258" vertical-offset="328" max-vertical-offset="990">
-              <caret line="20" column="58" selection-start-line="20" selection-start-column="54" selection-end-line="20" selection-end-column="58" />
+            <state vertical-scroll-proportion="-17.419355" vertical-offset="126" max-vertical-offset="990">
+              <caret line="37" column="35" selection-start-line="37" selection-start-column="14" selection-end-line="37" selection-end-column="35" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="edit_tag_date.ejs" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="edit_tag_date.ejs" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/views/edit_tag_date.ejs">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.38243628" vertical-offset="0" max-vertical-offset="706">
-              <caret line="15" column="9" selection-start-line="15" selection-start-column="9" selection-end-line="15" selection-end-column="9" />
+            <state vertical-scroll-proportion="-16.666666" vertical-offset="0" max-vertical-offset="648">
+              <caret line="25" column="17" selection-start-line="25" selection-start-column="9" selection-end-line="25" selection-end-column="17" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dashboard_edit_tag_date.coffee" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="query.ejs" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/views/query.ejs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-1.3333334" vertical-offset="0" max-vertical-offset="684">
+              <caret line="2" column="47" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="dashboard_edit_tag_date.coffee" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/javascripts/dashboard_edit_tag_date.coffee">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="126">
-              <caret line="1" column="57" selection-start-line="1" selection-start-column="57" selection-end-line="1" selection-end-column="57" />
+            <state vertical-scroll-proportion="0.049113233" vertical-offset="0" max-vertical-offset="733">
+              <caret line="2" column="37" selection-start-line="2" selection-start-column="37" selection-end-line="2" selection-end-column="37" />
               <folding />
             </state>
           </provider>
@@ -132,8 +140,8 @@
         <option value="$PROJECT_DIR$/public/tag_date/test.json" />
         <option value="$PROJECT_DIR$/routes/edit_tag_date.coffee" />
         <option value="$PROJECT_DIR$/public/javascripts/dashboard_query.coffee" />
-        <option value="$PROJECT_DIR$/public/javascripts/dashboard_edit_tag_date.coffee" />
         <option value="$PROJECT_DIR$/views/edit_tag_date.ejs" />
+        <option value="$PROJECT_DIR$/public/javascripts/dashboard_edit_tag_date.coffee" />
       </list>
     </option>
   </component>
@@ -757,14 +765,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/query.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.054054055" vertical-offset="0" max-vertical-offset="684">
-          <caret line="2" column="47" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/tag_date/test.json">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="653">
@@ -785,16 +785,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="738">
           <caret line="5" column="29" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding>
-            <marker date="1434516578364" expanded="true" signature="620:865" placeholder="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/query.coffee">
+    <entry file="file://$PROJECT_DIR$/views/query.ejs">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.032258" vertical-offset="328" max-vertical-offset="990">
-          <caret line="20" column="58" selection-start-line="20" selection-start-column="54" selection-end-line="20" selection-end-column="58" />
+        <state vertical-scroll-proportion="-1.3333334" vertical-offset="0" max-vertical-offset="684">
+          <caret line="2" column="47" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
           <folding />
         </state>
       </provider>
@@ -802,7 +800,7 @@
     <entry file="file://$PROJECT_DIR$/public/javascripts/dashboard_query.coffee">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-2.903226" vertical-offset="0" max-vertical-offset="2862">
-          <caret line="5" column="7" selection-start-line="5" selection-start-column="7" selection-end-line="5" selection-end-column="7" />
+          <caret line="5" column="31" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
           <folding>
             <element signature="e#5180#5348#0" expanded="false" />
             <element signature="e#5385#6359#0" expanded="false" />
@@ -811,18 +809,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/javascripts/dashboard_edit_tag_date.coffee">
+    <entry file="file://$PROJECT_DIR$/routes/query.coffee">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="126">
-          <caret line="1" column="57" selection-start-line="1" selection-start-column="57" selection-end-line="1" selection-end-column="57" />
+        <state vertical-scroll-proportion="-17.419355" vertical-offset="126" max-vertical-offset="990">
+          <caret line="37" column="35" selection-start-line="37" selection-start-column="14" selection-end-line="37" selection-end-column="35" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/views/edit_tag_date.ejs">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.38243628" vertical-offset="0" max-vertical-offset="706">
-          <caret line="15" column="9" selection-start-line="15" selection-start-column="9" selection-end-line="15" selection-end-column="9" />
+        <state vertical-scroll-proportion="-16.666666" vertical-offset="0" max-vertical-offset="648">
+          <caret line="25" column="17" selection-start-line="25" selection-start-column="9" selection-end-line="25" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/javascripts/dashboard_edit_tag_date.coffee">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.049113233" vertical-offset="0" max-vertical-offset="733">
+          <caret line="2" column="37" selection-start-line="2" selection-start-column="37" selection-end-line="2" selection-end-column="37" />
           <folding />
         </state>
       </provider>
