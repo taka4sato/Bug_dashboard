@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>DMS Query</title>
-  <link rel='stylesheet' href='/stylesheets/style.css'/>
+  <title>DMS Tag Date edit page</title>
+  <link rel='stylesheet' href="/stylesheets/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <script type="text/javascript" src="/javascripts/jquery.min.js"></script>
-  <script type='text/javascript' src='/javascripts/jquery.dataTables.min.js'></script>
-  <script type='text/javascript' src='/javascripts/dashboard_edit_tag_date.js'></script>
-  <link rel="stylesheet" media="all" href="/stylesheets/jquery.dataTables.min.css"/>
+  <script type="text/javascript" src="/javascripts/moment.min.js"></script>
+  <script type='text/javascript' src="/javascripts/dashboard_edit_tag_date.js"></script>
 
+  <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/1/daterangepicker.js"></script>
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/1/daterangepicker-bs3.css" />
 
   <script type="text/javascript">
     $(document).ready(function () {
@@ -19,12 +21,16 @@
   </script>
 
 
+
+
 </head>
 <body>
 <h1>Tag Date edit page</h1>
 
 <div id="tag_Date"></div>
 <br><br>
+
+<div id="tag_Info"><input type="text" name="birthdate" value="10/24/1984" /></div>
 
 </body>
 </html>
