@@ -1,4 +1,5 @@
 node_modules/
 test/
 memo/
+public/tag_date/
 debug.log
