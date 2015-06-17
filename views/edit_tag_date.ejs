@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DMS Query</title>
+  <link rel='stylesheet' href='/stylesheets/style.css'/>
+  <script type="text/javascript" src="/javascripts/jquery.min.js"></script>
+  <script type='text/javascript' src='/javascripts/jquery.dataTables.min.js'></script>
+  <script type='text/javascript' src='/javascripts/dashboard_edit_tag_date.js'></script>
+  <link rel="stylesheet" media="all" href="/stylesheets/jquery.dataTables.min.css"/>
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var queryKey = "<%= tag_date %>";
+      console.log (queryKey.replace(/&quot;/g,'"'));
+      $('div.tag_Date').replaceWith(queryKey.replace(/&quot;/g,'"'));
+      startpoint_dashboard_edit_tag_date(queryKey)
+    });
+
+  </script>
+
+
+</head>
+<body>
+<h1>Tag Date edit page</h1>
+
+<div id="tag_Date"></div>
+<br><br>
+
+</body>
+</html>

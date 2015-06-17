@@ -9,6 +9,7 @@ index  = require("./routes/index")
 query  = require("./routes/query")
 post   = require("./routes/post")
 list   = require("./routes/list")
+edit_tag_date   = require("./routes/edit_tag_date")
 mongo1 = require("./routes/mongo1")
 
 app = express()
@@ -29,6 +30,7 @@ app.use "/", index
 app.use "/v1/query", query
 app.use "/v1/post", post
 app.use "/v1/list", list
+app.use "/v1/edit_tag_date", edit_tag_date
 app.use "/v1/mongo1", mongo1
 
 # catch 404 and forward to error handler
