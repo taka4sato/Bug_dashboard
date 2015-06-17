@@ -1,12 +1,8 @@
-startpoint_dashboard_edit_tag_date= (tag_info_json) ->
-  console.log 'welcome to dashboard edit tag date conffee' + tag_info_json
-  $("#tag_Date").append tag_info_json
+startpoint_dashboard_edit_tag_date= (tag_info) ->
+  $("#tag_Date").append tag_info
+  tag_info_json = JSON.parse(tag_info);
+  $.each tag_info_json.Tag_date, (i, item) ->
+    console.log item
+    console.log item.Tag_name
+    $("#tag_Info").append item.Tag_name + ":: <input type='text' name='" + item.Tag_name + "' value='" + item.Tag_deadline + "' /><br>"
 
-  $('input[name="birthdate"]').daterangepicker {
-    singleDatePicker: true
-    showDropdowns: true
-  }, (start, end, label) ->
-    years = moment().diff(start, 'years')
-    alert 'You are ' + years + ' years old.'
-    return
-  return
