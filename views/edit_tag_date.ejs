@@ -2,14 +2,13 @@
 <html>
 <head>
   <title>DMS Tag Date edit page</title>
-  <link rel='stylesheet' href="/stylesheets/style.css">
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/1/daterangepicker-bs3.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel='stylesheet' href="/stylesheets/style_taglist.css">
   <script type="text/javascript" src="/javascripts/jquery.min.js"></script>
   <script type="text/javascript" src="/javascripts/moment.min.js"></script>
   <script type='text/javascript' src="/javascripts/dashboard_edit_tag_date.js"></script>
-
   <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/1/daterangepicker.js"></script>
-  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/1/daterangepicker-bs3.css" />
 
   <script type="text/javascript">
     $(document).ready(function () {
@@ -26,13 +25,14 @@
 </head>
 <body>
 <h1>Tag Date edit page</h1>
-
+<br>
 <div id="tag_Date"></div>
-<br><br>
-
+<span id="tag_Button"></span> - <span id="tag_Warn"></span>
+<br>
+<br>
+<div id="tag_Header"></div>
 <div id="tag_Info"></div>
 
 <br><br>
-<div id="tag_Button"></div>
 </body>
 </html>

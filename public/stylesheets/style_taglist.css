@@ -1,0 +1,46 @@
+body {
+    font-size: 2.00em;
+    font-family: "segoe UI", "Roboto Condensed", "Lucida Grande", "Hiragino Kaku Gothic ProN", YuGothic, Meiryo, sans-serif;
+}
+.underline { border-bottom:solid 2px #000000;}
+.less_than_1day { color:red border-bottom:solid 2px #000000;}
+
+a {
+    color: #00B7FF;
+}
+
+span {
+    display: inline-block;
+    margin-left  : 5px;
+    padding-left : 10px;
+    margin-right : 5px;
+    padding-right: 10px;
+    padding-top  : 3px;
+    margin-top   : 2px;
+    padding-bottom: 3px;
+    margin-bottom : 2px;
+}
+
+.list_header {
+    background-color: #D3D3D3;
+}
+
+.new_item {
+    margin-left  : 0px;
+    padding-left : 0px;
+    margin-right : 0px;
+    padding-right: -10px;
+}
+
+
+.warn_message {
+
+    font-size: 0.80em;
+    background-color: #FFE4E1;
+    border: thin solid orangered;
+    border-radius: 5px;
+    padding-top  : 5px;
+    margin-top   : 5px;
+    padding-bottom: 5px;
+    margin-bottom : 5px;
+}

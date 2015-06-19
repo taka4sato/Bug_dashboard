@@ -18,3 +18,8 @@ tr.shown div.details-control {
 a {
   color: #00B7FF;
 }
+
+
+span {
+    display: inline-block;
+}
