@@ -9,6 +9,7 @@ a {
     color: #00B7FF;
 }
 
+
 span {
     display: inline-block;
     margin-left  : 5px;
@@ -21,9 +22,15 @@ span {
     margin-bottom : 2px;
 }
 
+.buffer_forCheckbox {
+    margin-left  : -12px;
+}
+
 .list_header {
     background-color: #D3D3D3;
 }
+
+
 
 .new_item {
     margin-left  : 0px;
@@ -31,7 +38,6 @@ span {
     margin-right : 0px;
     padding-right: -10px;
 }
-
 
 .warn_message {
 

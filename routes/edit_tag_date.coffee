@@ -29,7 +29,7 @@ router.get '/', (req, res) ->
     else
       console.log text
       res.set 'Cache-Control': 'no-cache, max-age=0'
-      res.render 'edit_tag_date', tag_date: text
+      res.render 'edit_tag_date'
       return
   return
 
