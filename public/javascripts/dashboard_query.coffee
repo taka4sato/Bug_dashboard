@@ -1,15 +1,19 @@
 startpoint_dashboard_query = (queryKey) ->
   $("#Page_Title").append "<span class=\"underline\">" + decodeURIComponent(queryKey) + "</span>"
   targetURL = window.location.protocol + "//" + window.location.host + "/v1/query?query_key=" + queryKey + "&format=json"
-  console.log targetURL
-  $.getJSON targetURL, (json) ->
-    ## console.log json
-    createTable json, queryKey
 
-createTable = (json, queryKey) ->
+  $.getJSON targetURL, (json) ->
+    targetURL_tagInfo = window.location.protocol + "//" + window.location.host + "/tag_date/tag_info.json"
+    $.getJSON targetURL_tagInfo, (tag_date_info) ->
+      createTable json, tag_date_info
+
+
+createTable = (json, tag_date_info) ->
   if json.length isnt 0 and json[0].hasOwnProperty("query_date")
     delta_time = timeAgoInWords(Date.parse(String(json[0].query_date).replace(/-/g, "/")), 1)
     $("#DMS_update_time").append "(Query result as of <span class=\"underline\"><b>" + delta_time + "</b></span>)"
+    $("#return_to_list_URL").append "<a href='" + window.location.protocol + "//" + window.location.host + "/v1/list'> back to Query List </a>"
+
     if json[0].DMS_count is 0
       $("#footer_comment").append "<b>No DMS exists</b> for this query"
     else
@@ -79,7 +83,7 @@ createTable = (json, queryKey) ->
           row.child.hide()
           tr.removeClass 'shown'
         else                    # Will open this row
-          row.child(addDetailTagInfo(row.data())).show()
+          row.child(addDetailTagInfo(row.data(), tag_date_info)).show()
           tr.addClass 'shown'
 
   else
@@ -100,17 +104,30 @@ countTag = (tag_info, meta_info) ->
     $.each tag_info["Tag_info"], (i, item) ->
       count = i
     count = count + 1
-    return "<div class='details-control'><img border='0' src='../images/empty.gif'>" + count + "</img></div>"
+    if count == 1
+      return "<div class='details-control'><img border='0' src='../images/empty.gif'> </img></div>"
+    else
+      return "<div class='details-control'><img border='0' src='../images/empty.gif'>" + count + "</img></div>"
 
 
-addDetailTagInfo = (tag_info) ->
-  console.log(tag_info["Tag_info"])
+addDetailTagInfo = (tag_info, tag_date_info) ->
+
   tag_string = ""
-  $.each tag_info["Tag_info"], (i, item) ->
-    console.log item
-    console.log item["Tag"]
-    console.log item["DeliveryBranch"]
-    tag_string += "<tr><td>" + item["DeliveryBranch"] + "</td><td>" + item["Tag"] + "</td><td>" + "TBD" + "</td></tr>"
+  $.each tag_info["Tag_info"], (i, item_tag_info) ->
+    console.log item_tag_info
+    #console.log item_tag_info["Tag"]
+    #console.log item_tag_info["DeliveryBranch"]
+
+    if item_tag_info["Tag"] == "Fix ASAP"
+      console.log
+      tag_string += "<tr><td>" + item_tag_info["DeliveryBranch"] + "</td><td>" + item_tag_info["Tag"] + "</td><td bgcolor='#FF0000'>ASAP</td></tr>"
+
+    else
+      tag_deadline = ""
+      $.each tag_date_info["Tag_item"], (i, item_date_info) ->
+        if item_date_info["Tag_branch"] == item_tag_info["DeliveryBranch"] and item_date_info["Tag_name"] == item_tag_info["Tag"]
+          tag_deadline = item_date_info["Tag_deadline"]
+      tag_string += "<tr><td>" + item_tag_info["DeliveryBranch"] + "</td><td>" + item_tag_info["Tag"] + "</td><td>" + tag_deadline + "</td></tr>"
 
   return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
     '<tr><td>Tag Branch:</td><td>Tag Target</td><td>Deadline</td></tr>'+

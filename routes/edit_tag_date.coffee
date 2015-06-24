@@ -5,7 +5,7 @@ router = express.Router()
 logger = require('./logger')
 
 router.post '/', (req, res) ->
-  filename = 'public/tag_date/test.json'
+  filename = 'public/tag_date/tag_info.json'
   console.log req.body
   file.writeFile filename, JSON.stringify(req.body), (err) ->
     if err
@@ -20,7 +20,7 @@ router.post '/', (req, res) ->
 
 
 router.get '/', (req, res) ->
-  filename = 'public/tag_date/test.json'
+  filename = 'public/tag_date/tag_info.json'
   file.readFile filename, 'utf8', (err, text) ->
     if err
       logger.error 'err to readFile'

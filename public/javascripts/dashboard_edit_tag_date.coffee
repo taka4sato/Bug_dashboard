@@ -4,7 +4,7 @@ global_tag_info_orig = ""
 global_tag_info_del  = ""
 
 startpoint_dashboard_edit_tag_date= () ->
-  targetURL = window.location.protocol + "//" + window.location.host + "/tag_date/test.json"
+  targetURL = window.location.protocol + "//" + window.location.host + "/tag_date/tag_info.json"
   $.getJSON targetURL, (tag_info) ->
     create_TagList tag_info
 
