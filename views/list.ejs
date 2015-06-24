@@ -19,6 +19,7 @@
     });
 
     createTable = function(json) {
+      console.log (json);
       if (json.length === 0){
         console.log('no item found');
 
@@ -26,21 +27,23 @@
       else{
         output_json = [];
         $.each(json, function(i, item) {
-          var QueryKey, NumOfItem, QueryLink;
+          var QueryKey, NumOfItem, QueryDate, QueryLink;
           temp_array = [];
 
-          QueryKey  = escapeHTML(item["query_key"]);
-          NumOfItem = item["num"];
-          QueryLink = '<a href=\"' + item["URL"] +  '\" TARGET="_blank">link to detail</a>';
+          QueryKey      = '<a href=\"' + item["URL"] +  '\" TARGET="_blank">' + escapeHTML(item["query_key"]) + '</a>';
+          NumOfItem     = item["num"];
+          //QueryDate     = item["lastQueryDate"];
+          QueryDate     = highlightDate(item["lastQueryDate"]);
+          QueryLink     = '<a href=\"' + item["URL"] +  '\" TARGET="_blank">link to detail</a>';
 
           if (QueryKey.indexOf("Public Queries/") == 0) {
-            console.log (QueryKey + 'starts with Public Queries/ YO!');
+            console.log (QueryKey + 'starts with Public Queries/');
             QueryKey = QueryKey.slice(15);
 
           }
           temp_array.push(QueryKey);
           temp_array.push(NumOfItem);
-          temp_array.push(QueryLink);
+          temp_array.push(QueryDate);
           return output_json.push(temp_array);
         });
         $("#table_placeholder").html("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>");
@@ -53,10 +56,10 @@
               title: "Query key/Name"
             }, {
               title: "# of samples",
-              width: "80px"
+              width: "120px"
             }, {
-              title: "Link",
-              width: "60px"
+              title: "Last Query date",
+              width: "120px"
             }
           ]
         });
@@ -78,6 +81,47 @@
       };
       return text.replace(/["&'<>]/g, replacement);
     };
+
+    highlightDate = function(text_string) {
+      return timeAgoInWords(Date.parse(text_string.replace(/-/g, "/")), 0);
+    };
+
+    timeDelta = function(date) {
+      var dateTime, e, now;
+      try {
+        now = Math.ceil(Number(new Date().getTime()) / 1000);
+        dateTime = Math.ceil(Number(new Date(date)) / 1000);
+        return now - dateTime;
+      } catch (_error) {
+        e = _error;
+        return "";
+    }};
+
+    timeAgoInWords = function(date, flag) {
+      var diff, e, str;
+      try {
+        diff = timeDelta(date);
+        str = void 0;
+        if (diff < 60 * 60) {
+          str = String(Math.floor(diff / 60.));
+          return (flag === 1 ? str + " minutes ago" : "< 1h");
+        } else if (diff < 60 * 60 * 24) {
+          str = String(Math.floor(diff / (60 * 60)));
+          return (flag === 1 ? str + (str === "1" ? " hour" : " hours") + " ago" : "< 24h");
+        } else if (diff < 60 * 60 * 24 * 31) {
+          str = String(Math.floor(diff / (60 * 60 * 24)));
+          return str + (str === "1" ? " day" : " days") + " ago";
+        } else if (diff < 60 * 60 * 24 * 365) {
+          str = String(Math.floor(diff / (60 * 60 * 24 * 31)));
+          return str + (str === "1" ? " month" : " months") + " ago";
+        } else {
+          str = String(Math.floor(diff / (60 * 60 * 24 * 365)));
+          return str + (str === "1" ? " year" : " years") + " ago";
+        }
+      } catch (_error) {
+        e = _error;
+        return "";
+    }};
   </script>
 
 </head>
