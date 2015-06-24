@@ -83,7 +83,7 @@
     };
 
     highlightDate = function(text_string) {
-      return timeAgoInWords(Date.parse(text_string.replace(/-/g, "/")), 0);
+      return timeAgoInWords(Date.parse(text_string.replace(/-/g, "/")), 1);
     };
 
     timeDelta = function(date) {
