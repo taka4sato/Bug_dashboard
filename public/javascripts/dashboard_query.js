@@ -22,6 +22,10 @@ createTable = function(json, tag_date_info) {
     if (json[0].DMS_count === 0) {
       return $("#footer_comment").append("<b>No DMS exists</b> for this query");
     } else {
+      $.each(json[0].DMS_List, function(i, item) {
+        console.log(item);
+        return console.log("==========================");
+      });
       $("#table_placeholder").html("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>");
       dms_Table = $("#DMS_Table").DataTable({
         data: json[0].DMS_List,

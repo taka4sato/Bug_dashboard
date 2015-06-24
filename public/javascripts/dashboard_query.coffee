@@ -20,6 +20,7 @@ createTable = (json, tag_date_info) ->
 
       $.each json[0].DMS_List, (i, item) ->
         console.log item
+        console.log "=========================="
 
       $("#table_placeholder").html "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>"
       dms_Table = $("#DMS_Table").DataTable
