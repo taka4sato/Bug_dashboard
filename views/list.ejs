@@ -19,7 +19,7 @@
     });
 
     createTable = function(json) {
-      console.log (json);
+      // console.log (json);
       if (json.length === 0){
         console.log('no item found');
 
@@ -30,17 +30,22 @@
           var QueryKey, NumOfItem, QueryDate, QueryLink;
           temp_array = [];
 
-          QueryKey      = '<a href=\"' + item["URL"] +  '\" TARGET="_blank">' + escapeHTML(item["query_key"]) + '</a>';
-          NumOfItem     = item["num"];
-          //QueryDate     = item["lastQueryDate"];
-          QueryDate     = highlightDate(item["lastQueryDate"]);
-          QueryLink     = '<a href=\"' + item["URL"] +  '\" TARGET="_blank">link to detail</a>';
-
-          if (QueryKey.indexOf("Public Queries/") == 0) {
-            console.log (QueryKey + 'starts with Public Queries/');
-            QueryKey = QueryKey.slice(15);
-
+          queryKey = escapeHTML(item["query_key"]);
+          if (queryKey.indexOf("Public Queries/") == 0) {
+            queryKey = queryKey.slice(15);
           }
+
+          queryKeyArray = queryKey.split("/");
+          queryKeyString = "";
+          $.each(queryKeyArray, function(count, item) {
+            if (count % 2 == 0){queryKeyString = queryKeyString + "<font color='black'>" + item + "</font>/"}
+            else{queryKeyString = queryKeyString + "<font color='blue'>" + item + "</font>/"}
+          });
+
+          QueryKey      = '<a href=\"' + item["URL"] +  '\" TARGET="_blank">' + queryKeyString + '</a>';
+          NumOfItem     = item["num"];
+          QueryDate     = highlightDate(item["lastQueryDate"]);
+
           temp_array.push(QueryKey);
           temp_array.push(NumOfItem);
           temp_array.push(QueryDate);
