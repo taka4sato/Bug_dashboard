@@ -40,10 +40,17 @@ createTable = (json, tag_date_info) ->
           title: "Component"
           width: "80px"
         ,
+          data : "State"
+          title: "State"
+          width: "80px"
+        ,
+          data : "IssueType"
+          title: "Type"
+          width: "80px"
+        ,
           data: null
           title: "Tag"
           width: "5px"
-          #className: 'details-control'
           orderable: false
           defaultContent: ''
         ,
@@ -64,12 +71,12 @@ createTable = (json, tag_date_info) ->
           render: (data, type, row) ->
             return optimezeTitleLength(data)
         },{
-          targets: [3]
+          targets: [5]
           render: (data, type, row, meta) ->
             if type == "display"
               return countTag(data, meta)
         },{
-          targets: [4,5]
+          targets: [6,7]
           render: (data, type, row) ->
             if type == "sort"
               return Date.parse(data.replace(/-/g, "/"))
