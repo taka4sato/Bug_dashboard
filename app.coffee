@@ -9,6 +9,7 @@ index  = require("./routes/index")
 query  = require("./routes/query")
 post   = require("./routes/post")
 list   = require("./routes/list")
+schedule_job   = require("./routes/schedule_job")
 edit_tag_date   = require("./routes/edit_tag_date")
 mongo1 = require("./routes/mongo1")
 

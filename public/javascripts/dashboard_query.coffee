@@ -30,7 +30,6 @@ createTable = (json, tag_date_info) ->
         bStateSave: true
         order: [[4, "desc"]]
 
-
         columns: [
           data : "DMS_ID"
           title: "DMS_ID"

@@ -1,0 +1,64 @@
+express = require('express')
+logger = require('./logger')
+schedule = require('node-schedule')
+mongodb = require('mongodb')
+mongo_query = require('./mongo_query')
+promise = require("bluebird")
+router = express.Router()
+
+DB_name = 'posttest'
+Collection_name = 'dms_test'
+db_instance = ""
+
+#そのcollectionをQueryするREST API I/Fを次に設計する /date-rangeとかかな。
+
+
+## currently every 1 hour (when xx:30, it is invoked)
+j = schedule.scheduleJob('30 * * * *', ->
+  mongo_query.open_db(DB_name).then((database) ->
+    mongo_query.check_collection_exist database, Collection_name)
+  .then((database) ->
+    db_instance = database
+    query_pipe = [ { $group:
+      _id: '$query_key'
+      lastQueryDate: '$max': '$query_date'
+      count: '$sum': 1 } ]
+    mongo_query.query_list db_instance, query_pipe, Collection_name)
+  .then((result) ->
+    output_array = []
+    promise_array = []
+    for count of result
+      output_array.push(result[count]['_id'])
+    for query_key_item in output_array
+      promise_array.push(mongo_query.dump_one(db_instance, Collection_name, query_key_item))
+    promise.all(promise_array))
+  .then((dataArray) ->
+    date = new Date
+    date_string = date.getFullYear() + '-' + String(date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getHours()
+
+    promise_array = []
+    for item in dataArray
+      object_to_register = {"query_date": date_string}
+      DMS_id_array = []
+      if item[0]["DMS_List"].length isnt 0
+        object_to_register["DMS_count"] = item[0]["DMS_List"].length
+        for dms_id in item[0]["DMS_List"]
+          DMS_id_array.push (dms_id["DMS_ID"])
+        DMS_id_array.sort (a, b) ->
+          if a < b
+            return -1
+          else
+            return 1
+      else
+        object_to_register["DMS_count"] = 0
+
+      object_to_register["query_key"] = item[0]["query_key"]
+      object_to_register["DMS_List"] = DMS_id_array
+      promise_array.push(mongo_query.post_item db_instance, "dms_daily_count", object_to_register)
+      promise.all(promise_array))
+
+  .catch (error) ->
+    logger.error error
+)
+
+module.exports = router
