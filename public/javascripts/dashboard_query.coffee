@@ -19,15 +19,18 @@ createTable = (json, tag_date_info) ->
     else
 
       $.each json[0].DMS_List, (i, item) ->
-        console.log item
-        console.log "=========================="
+        #console.log item
+        #console.log "=========================="
 
       $("#table_placeholder").html "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>"
       dms_Table = $("#DMS_Table").DataTable
         data: json[0].DMS_List
         pageLength: 100
         autoWidth: false
+        bStateSave: true
         order: [[4, "desc"]]
+
+
         columns: [
           data : "DMS_ID"
           title: "DMS_ID"
@@ -42,11 +45,11 @@ createTable = (json, tag_date_info) ->
         ,
           data : "State"
           title: "State"
-          width: "80px"
+          width: "60px"
         ,
           data : "IssueType"
           title: "Type"
-          width: "80px"
+          width: "60px"
         ,
           data: null
           title: "Tag"
@@ -94,6 +97,24 @@ createTable = (json, tag_date_info) ->
         else                    # Will open this row
           row.child(addDetailTagInfo(row.data(), tag_date_info)).show()
           tr.addClass 'shown'
+
+      $("#DMS_Table_filter").prepend "<span><button type='button' id='covlis_button' class='btn btn-default'>show hide column</button></span>"
+
+      colvis = new ($.fn.dataTable.ColVis)(dms_Table,
+        exclude: [0, 1]
+        bCssPosition: true)
+
+      $('#covlis_button').on 'click', (e) ->
+        e.preventDefault()
+        pos = {}
+        target = $(this)
+        pos.x = target.offset().left
+        pos.y = target.offset().top + target.outerHeight()
+        $(colvis.dom.collection).css
+          position: 'absolute'
+          left: pos.x
+          top: pos.y
+        colvis._fnCollectionShow()
 
   else
     $("#DMS_update_time").append "<b>Error!</b> Fail to load query result"

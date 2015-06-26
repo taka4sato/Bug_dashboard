@@ -14,7 +14,7 @@ startpoint_dashboard_query = function(queryKey) {
 };
 
 createTable = function(json, tag_date_info) {
-  var delta_time, dms_Table;
+  var colvis, delta_time, dms_Table;
   if (json.length !== 0 && json[0].hasOwnProperty("query_date")) {
     delta_time = timeAgoInWords(Date.parse(String(json[0].query_date).replace(/-/g, "/")), 1);
     $("#DMS_update_time").append("(Query result as of <span class=\"underline\"><b>" + delta_time + "</b></span>)");
@@ -22,15 +22,13 @@ createTable = function(json, tag_date_info) {
     if (json[0].DMS_count === 0) {
       return $("#footer_comment").append("<b>No DMS exists</b> for this query");
     } else {
-      $.each(json[0].DMS_List, function(i, item) {
-        console.log(item);
-        return console.log("==========================");
-      });
+      $.each(json[0].DMS_List, function(i, item) {});
       $("#table_placeholder").html("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>");
       dms_Table = $("#DMS_Table").DataTable({
         data: json[0].DMS_List,
         pageLength: 100,
         autoWidth: false,
+        bStateSave: true,
         order: [[4, "desc"]],
         columns: [
           {
@@ -47,11 +45,11 @@ createTable = function(json, tag_date_info) {
           }, {
             data: "State",
             title: "State",
-            width: "80px"
+            width: "60px"
           }, {
             data: "IssueType",
             title: "Type",
-            width: "80px"
+            width: "60px"
           }, {
             data: null,
             title: "Tag",
@@ -98,7 +96,7 @@ createTable = function(json, tag_date_info) {
           }
         ]
       });
-      return $('#DMS_Table tbody').on('click', 'div.details-control', function() {
+      $('#DMS_Table tbody').on('click', 'div.details-control', function() {
         var row, tr;
         tr = $(this).closest('tr');
         row = dms_Table.row(tr);
@@ -109,6 +107,25 @@ createTable = function(json, tag_date_info) {
           row.child(addDetailTagInfo(row.data(), tag_date_info)).show();
           return tr.addClass('shown');
         }
+      });
+      $("#DMS_Table_filter").prepend("<span><button type='button' id='covlis_button' class='btn btn-default'>show hide column</button></span>");
+      colvis = new $.fn.dataTable.ColVis(dms_Table, {
+        exclude: [0, 1],
+        bCssPosition: true
+      });
+      return $('#covlis_button').on('click', function(e) {
+        var pos, target;
+        e.preventDefault();
+        pos = {};
+        target = $(this);
+        pos.x = target.offset().left;
+        pos.y = target.offset().top + target.outerHeight();
+        $(colvis.dom.collection).css({
+          position: 'absolute',
+          left: pos.x,
+          top: pos.y
+        });
+        return colvis._fnCollectionShow();
       });
     }
   } else {

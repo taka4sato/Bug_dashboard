@@ -19,6 +19,10 @@ a {
   color: #00B7FF;
 }
 
+#covlis_button {
+    margin-left  : 20px;
+    margin-right : 20px;
+}
 
 span {
     display: inline-block;
