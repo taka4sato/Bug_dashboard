@@ -16,7 +16,7 @@ db_instance = ""
 ## currently every 1 hour (when xx:30, it is invoked)
 j = schedule.scheduleJob('30 * * * *', ->
   date1 = new Date
-  date_string1 = date.getFullYear() + '-' + String(date1.getMonth() + 1) + '-' + date1.getDate() + '-' + date1.getHours()
+  date_string1 = date1.getFullYear() + '-' + String(date1.getMonth() + 1) + '-' + date1.getDate() + '-' + date1.getHours()
   logger.log warn "schedule job invoked : " + date_string1
 
   mongo_query.open_db(DB_name).then((database) ->
