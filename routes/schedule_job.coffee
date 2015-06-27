@@ -17,7 +17,7 @@ db_instance = ""
 j = schedule.scheduleJob('30 * * * *', ->
   date1 = new Date
   date_string1 = date1.getFullYear() + '-' + String(date1.getMonth() + 1) + '-' + date1.getDate() + '-' + date1.getHours()
-  logger.log warn "schedule job invoked : " + date_string1
+  logger.error "schedule job invoked : " + date_string1
 
   mongo_query.open_db(DB_name).then((database) ->
     mongo_query.check_collection_exist database, Collection_name)
@@ -58,8 +58,8 @@ j = schedule.scheduleJob('30 * * * *', ->
 
       object_to_register["query_key"] = item[0]["query_key"]
       object_to_register["DMS_List"] = DMS_id_array
-      logger.log warn "registerd key : " + object_to_register["query_key"]
-      logger.log warn "registerd #   : " + object_to_register["DMS_count"]
+      logger.error "registerd key : " + object_to_register["query_key"]
+      logger.error "registerd #   : " + object_to_register["DMS_count"]
       promise_array.push(mongo_query.post_item db_instance, "dms_daily_count", object_to_register)
       promise.all(promise_array))
 
