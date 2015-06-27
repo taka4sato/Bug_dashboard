@@ -10,8 +10,6 @@ DB_name = 'posttest'
 Collection_name = 'dms_test'
 db_instance = ""
 
-#そのcollectionをQueryするREST API I/Fを次に設計する /date-rangeとかかな。
-
 
 ## currently every 1 hour (when xx:30, it is invoked)
 j = schedule.scheduleJob('30 * * * *', ->
