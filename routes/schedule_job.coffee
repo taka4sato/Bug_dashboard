@@ -29,6 +29,8 @@ j = schedule.scheduleJob('30 * * * *', ->
   .then((result) ->
     output_array = []
     promise_array = []
+
+    #たぶん、ここで、lastQueryDateを見て、 dms_daily_countに登録するかの判定が必要
     for count of result
       output_array.push(result[count]['_id'])
     for query_key_item in output_array
@@ -36,7 +38,22 @@ j = schedule.scheduleJob('30 * * * *', ->
     promise.all(promise_array))
   .then((dataArray) ->
     date = new Date
-    date_string = date.getFullYear() + '-' + String(date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getHours()
+
+    #getHoursを2桁にする必要有り
+
+    year = String(date.getFullYear())
+    month = date.getMonth() + 1
+    if (month < 10)
+      month = '0' + month
+    day =  date.getDate()
+    if (day < 10)
+      day = '0' + day
+    hour =  date.getHours()
+    if (hour < 10)
+      hour = '0' + hour
+
+    date_string = [year, month, day, hour].join('-')
+    #logger.error date_string
 
     promise_array = []
     for item in dataArray
