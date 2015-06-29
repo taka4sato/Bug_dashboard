@@ -22,6 +22,8 @@ createTable = function(json, tag_date_info) {
     if (json[0].DMS_count === 0) {
       return $("#footer_comment").append("<b>No DMS exists</b> for this query");
     } else {
+      console.log(json);
+      console.log(json[0]["query_key"]);
       $.each(json[0].DMS_List, function(i, item) {});
       $("#table_placeholder").html("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>");
       dms_Table = $("#DMS_Table").DataTable({
@@ -113,7 +115,7 @@ createTable = function(json, tag_date_info) {
         exclude: [0, 1],
         bCssPosition: true
       });
-      return $('#covlis_button').on('click', function(e) {
+      $('#covlis_button').on('click', function(e) {
         var pos, target;
         e.preventDefault();
         pos = {};
@@ -126,6 +128,12 @@ createTable = function(json, tag_date_info) {
           top: pos.y
         });
         return colvis._fnCollectionShow();
+      });
+      $("#DMS_Table_filter").prepend("<span><button type='button' id='burndown_button' class='btn btn-default'>show Burndown Chart</button></span>");
+      return $('#burndown_button').on('click', function(e) {
+        var dashboard_URL;
+        dashboard_URL = window.location.protocol + "//" + window.location.host + "/v1/daily_count?query_key=" + encodeURIComponent(json[0]["query_key"]);
+        return location.href = dashboard_URL;
       });
     }
   } else {

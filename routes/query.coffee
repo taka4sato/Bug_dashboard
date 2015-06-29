@@ -18,7 +18,7 @@ router.get '/', (req, res) ->
     path = req.query['query_key']
     mongo_query.open_db(DB_name)
     .then((database) ->
-      mongo_query.dump_one database, Collection_name, path)
+      mongo_query.dump_one database, Collection_name, path, 1)
     .then((items) ->
       res.set 'Content-Type': 'application/json; charset=utf-8'
       res.set 'Cache-Control': 'no-cache, max-age=0'

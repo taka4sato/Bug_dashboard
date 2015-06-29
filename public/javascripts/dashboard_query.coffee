@@ -14,9 +14,13 @@ createTable = (json, tag_date_info) ->
     $("#DMS_update_time").append "(Query result as of <span class=\"underline\"><b>" + delta_time + "</b></span>)"
     $("#return_to_list_URL").append "<a href='" + window.location.protocol + "//" + window.location.host + "/v1/list'> back to Query List </a>"
 
+
     if json[0].DMS_count is 0
       $("#footer_comment").append "<b>No DMS exists</b> for this query"
     else
+
+      console.log json
+      console.log json[0]["query_key"]
 
       $.each json[0].DMS_List, (i, item) ->
         #console.log item
@@ -97,6 +101,7 @@ createTable = (json, tag_date_info) ->
           row.child(addDetailTagInfo(row.data(), tag_date_info)).show()
           tr.addClass 'shown'
 
+
       $("#DMS_Table_filter").prepend "<span><button type='button' id='covlis_button' class='btn btn-default'>show hide column</button></span>"
 
       colvis = new ($.fn.dataTable.ColVis)(dms_Table,
@@ -114,6 +119,12 @@ createTable = (json, tag_date_info) ->
           left: pos.x
           top: pos.y
         colvis._fnCollectionShow()
+
+      $("#DMS_Table_filter").prepend "<span><button type='button' id='burndown_button' class='btn btn-default'>show Burndown Chart</button></span>"
+      $('#burndown_button').on 'click', (e) ->
+        dashboard_URL = window.location.protocol + "//" + window.location.host + "/v1/daily_count?query_key=" + encodeURIComponent(json[0]["query_key"])
+        location.href = dashboard_URL
+
 
   else
     $("#DMS_update_time").append "<b>Error!</b> Fail to load query result"

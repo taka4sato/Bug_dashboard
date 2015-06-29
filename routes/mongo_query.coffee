@@ -17,10 +17,10 @@ exports.open_db = (database_name) ->
     return
   )
 
-exports.dump_one = (database, Coll_name, path) ->
+exports.dump_one = (database, Coll_name, path, count) ->
   new promise((resolve, reject) ->
     collection = database.collection(Coll_name)
-    collection.find(query_key: path).sort(query_date: -1).limit(1).toArray (error, items) ->
+    collection.find(query_key: path).sort(query_date: -1).limit(count).toArray (error, items) ->
       unless error
         resolve items
       else
@@ -30,6 +30,8 @@ exports.dump_one = (database, Coll_name, path) ->
   )
 
 
+
+## Dump latest records, sorted by "query_date"
 
 exports.dump_latest_items = (database, Coll_name, count) ->
   new promise((resolve, reject) ->
@@ -56,6 +58,7 @@ exports.check_collection_exist = (database, Collection_name) ->
     return
   )
 
+## Mongo query with mongo aggregation by "pipe"
 exports.query_list = (database, pipe, Collection_name) ->
   new promise((resolve, reject) ->
     query_collection = database.collection(Collection_name)
@@ -68,6 +71,8 @@ exports.query_list = (database, pipe, Collection_name) ->
     return
   )
 
+
+## POST a item
 exports.post_item = (database, Collection_name, item) ->
   new promise((resolve, reject) ->
     query_collection = database.collection(Collection_name)

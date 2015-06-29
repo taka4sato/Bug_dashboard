@@ -32,7 +32,7 @@ j = schedule.scheduleJob('30 * * * *', ->
     for count of result
       output_array.push(result[count]['_id'])
     for query_key_item in output_array
-      promise_array.push(mongo_query.dump_one(db_instance, Collection_name, query_key_item))
+      promise_array.push(mongo_query.dump_one(db_instance, Collection_name, query_key_item, 1))
     promise.all(promise_array))
   .then((dataArray) ->
     date = new Date
