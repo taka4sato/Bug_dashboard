@@ -1,63 +1,60 @@
 express = require('express')
 logger = require('./logger')
 schedule = require('node-schedule')
-mongodb = require('mongodb')
 mongo_query = require('./mongo_query')
 promise = require("bluebird")
 router = express.Router()
 
 DB_name = 'posttest'
-Collection_name = 'dms_test'
+collectionDMSQuery   = 'dms_test'
+collectionDailyCount = 'dms_daily_count'
 db_instance = ""
+expireDuration = 535680 ## sec, 31 days = 3600 * 24 * 31
+seeAsValidRecordDuration = 3600000000  # msec, 1h = 1000*60*60
+
+mongo_query.open_db(DB_name).then((database) ->
+  mongo_query.check_collection_exist database, collectionDailyCount)
+.then((database) ->
+  pipe = "{'ttl_date':1}, {expireAfterSeconds: " + expireDuration + "}"
+  mongo_query.create_index(database, collectionDailyCount, pipe))
+.then((result) ->
+  logger.error(result))
+.catch (error) ->
+  logger.error error
 
 
 ## currently every 1 hour (when xx:30, it is invoked)
-j = schedule.scheduleJob('30 * * * *', ->
-  date1 = new Date
-  date_string1 = date1.getFullYear() + '-' + String(date1.getMonth() + 1) + '-' + date1.getDate() + '-' + date1.getHours()
-  logger.error "schedule job invoked : " + date_string1
+## if you want to execute job every 1 mins, just set to "*/1 * * * *"
+j = schedule.scheduleJob('*/1 * * * *', ->
+
+  date_string = getDateString(new Date)
+  logger.error "schedule job invoked : " + date_string
 
   mongo_query.open_db(DB_name).then((database) ->
-    mongo_query.check_collection_exist database, Collection_name)
+    mongo_query.check_collection_exist database, collectionDMSQuery)
   .then((database) ->
     db_instance = database
     query_pipe = [ { $group:
       _id: '$query_key'
       lastQueryDate: '$max': '$query_date'
       count: '$sum': 1 } ]
-    mongo_query.query_list db_instance, query_pipe, Collection_name)
+    mongo_query.query_list db_instance, query_pipe, collectionDMSQuery)
   .then((result) ->
     output_array = []
     promise_array = []
 
-    #たぶん、ここで、lastQueryDateを見て、 dms_daily_countに登録するかの判定が必要
     for count of result
-      output_array.push(result[count]['_id'])
+      deltaDate = new Date - Date.parse(result[count]["lastQueryDate"])
+      if deltaDate < seeAsValidRecordDuration
+        output_array.push(result[count]['_id'])
+
     for query_key_item in output_array
-      promise_array.push(mongo_query.dump_one(db_instance, Collection_name, query_key_item, 1))
+      promise_array.push(mongo_query.dump_one(db_instance, collectionDMSQuery, query_key_item, 1))
     promise.all(promise_array))
   .then((dataArray) ->
-    date = new Date
-
-    #getHoursを2桁にする必要有り
-
-    year = String(date.getFullYear())
-    month = date.getMonth() + 1
-    if (month < 10)
-      month = '0' + month
-    day =  date.getDate()
-    if (day < 10)
-      day = '0' + day
-    hour =  date.getHours()
-    if (hour < 10)
-      hour = '0' + hour
-
-    date_string = [year, month, day, hour].join('-')
-    #logger.error date_string
-
     promise_array = []
     for item in dataArray
-      object_to_register = {"query_date": date_string}
+      object_to_register = {"query_date": date_string, "ttl_date": new Date}
       DMS_id_array = []
       if item[0]["DMS_List"].length isnt 0
         object_to_register["DMS_count"] = item[0]["DMS_List"].length
@@ -73,13 +70,40 @@ j = schedule.scheduleJob('30 * * * *', ->
 
       object_to_register["query_key"] = item[0]["query_key"]
       object_to_register["DMS_List"] = DMS_id_array
-      logger.error "registerd key : " + object_to_register["query_key"]
-      logger.error "registerd #   : " + object_to_register["DMS_count"]
-      promise_array.push(mongo_query.post_item db_instance, "dms_daily_count", object_to_register)
-      promise.all(promise_array))
-
+      #logger.error "query date : " + object_to_register["query_date"] + "registered key : " + object_to_register["query_key"]
+      #logger.error "registered #   : " + object_to_register["DMS_count"]
+      promise_array.push(mongo_query.post_item db_instance, collectionDailyCount, object_to_register)
+    promise.all(promise_array))
   .catch (error) ->
     logger.error error
 )
+
+###
+.then((result) ->
+  mongo_query.dump_latest_items db_instance, collectionDailyCount, 30)
+.then((items) ->
+  logger.error "==last 5 items==================="
+  for item in items
+    logger.error JSON.stringify(item["query_date"])
+  logger.error "==last 5 items===================")
+###
+
+
+getDateString = (dateInfo) ->
+  year = String(dateInfo.getFullYear())
+  month = dateInfo.getMonth() + 1
+  if (month < 10)
+    month = '0' + month
+  day =  dateInfo.getDate()
+  if (day < 10)
+    day = '0' + day
+  hour =  dateInfo.getHours()
+  if (hour < 10)
+    hour = '0' + hour
+  min =  dateInfo.getMinutes()
+  if (min < 10)
+    min = '0' + min
+
+  return [year, month, day, hour, min].join('-')
 
 module.exports = router

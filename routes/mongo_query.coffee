@@ -29,6 +29,18 @@ exports.dump_one = (database, Coll_name, path, count) ->
     return
   )
 
+exports.create_index = (database, Coll_name, pipe) ->
+  new promise((resolve, reject) ->
+    collection = database.collection(Coll_name)
+    collection.ensureIndex pipe, (error, items) ->
+      unless error
+        resolve items
+      else
+        reject error
+      return
+    return
+  )
+
 
 
 ## Dump latest records, sorted by "query_date"

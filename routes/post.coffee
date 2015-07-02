@@ -14,16 +14,31 @@ mongo_query = require('./mongo_query')
  http://ec2-54-64-81-68.ap-northeast-1.compute.amazonaws.com/v1/post
 ###
 DB_name = 'posttest'
-Collection_name = 'dms_test'
+collectionDMSQuery = 'dms_test'
+
+## test for expire, just set to 1hour
+#expireDuration = 535680 ## sec, 31 days = 3600 * 24 * 31
+expireDuration = 3600 ## sec, 31 days = 3600 * 24 * 31
+
 router.post '/', (req, res) ->
   res.set 'Content-Type': 'charset=utf-8'
   mongo_query.open_db(DB_name).then((database) ->
-    mongo_query.check_collection_exist database, Collection_name)
+    mongo_query.check_collection_exist database, collectionDMSQuery)
   .then((database) ->
-    mongo_query.post_item database, Collection_name, req.body)
+    pipe = "{'ttl_date':1}, {expireAfterSeconds: " + expireDuration + "}"
+    mongo_query.create_index(database, collectionDMSQuery, pipe))
+  .then((database) ->
+    logger.error "================old================="
+    logger.error req.body
+    logger.error "================old================="
+    req.body["ttl_date"] = new Date
+    logger.error "================new================="
+    logger.error req.body
+    logger.error "================new================="
+    mongo_query.post_item database, collectionDMSQuery, req.body)
 
   ##.then((database) ->
-  ##  mongo_query.dump_latest_items database, Collection_name, 5)
+  ##  mongo_query.dump_latest_items database, collectionDMSQuery, 5)
   ## .then((items) ->
   .then(() ->
 
