@@ -15,6 +15,7 @@ mongo_query = require('./mongo_query')
 ###
 DB_name = 'posttest'
 collectionDMSQuery = 'dms_test'
+dbInstance = ''
 
 ## test for expire, just set to 1hour
 #expireDuration = 535680 ## sec, 31 days = 3600 * 24 * 31
@@ -25,9 +26,10 @@ router.post '/', (req, res) ->
   mongo_query.open_db(DB_name).then((database) ->
     mongo_query.check_collection_exist database, collectionDMSQuery)
   .then((database) ->
+    dbInstance = database
     pipe = "{'ttl_date':1}, {expireAfterSeconds: " + expireDuration + "}"
-    mongo_query.create_index(database, collectionDMSQuery, pipe))
-  .then((database) ->
+    mongo_query.create_index(dbInstance, collectionDMSQuery, pipe))
+  .then(() ->
     logger.error "================old================="
     logger.error req.body
     logger.error "================old================="
@@ -35,7 +37,7 @@ router.post '/', (req, res) ->
     logger.error "================new================="
     logger.error req.body
     logger.error "================new================="
-    mongo_query.post_item database, collectionDMSQuery, req.body)
+    mongo_query.post_item dbInstance, collectionDMSQuery, req.body)
 
   ##.then((database) ->
   ##  mongo_query.dump_latest_items database, collectionDMSQuery, 5)
