@@ -16,7 +16,7 @@ startpoint_dashboard_query = function(queryKey) {
 createTable = function(json, tag_date_info) {
   var colvis, delta_time, dms_Table;
   if (json.length !== 0 && json[0].hasOwnProperty("query_date")) {
-    delta_time = timeAgoInWords(Date.parse(String(json[0].query_date).replace(/-/g, "/")), 1);
+    delta_time = timeAgoInWords(Date.parse(String(json[0].query_date).replace(/-/g, "/") + " GMT+0000"), 1);
     $("#DMS_update_time").append("(Query result as of <span class=\"underline\"><b>" + delta_time + "</b></span>)");
     $("#return_to_list_URL").append("<a href='" + window.location.protocol + "//" + window.location.host + "/v1/list'> back to Query List </a>");
     if (json[0].DMS_count === 0) {
@@ -24,7 +24,10 @@ createTable = function(json, tag_date_info) {
     } else {
       console.log(json);
       console.log(json[0]["query_key"]);
-      $.each(json[0].DMS_List, function(i, item) {});
+      $.each(json[0]["DMS_List"], function(i, item) {
+        console.log(item["DMS_ID"]);
+        return console.log(item["Modified_date"]);
+      });
       $("#table_placeholder").html("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>");
       dms_Table = $("#DMS_Table").DataTable({
         data: json[0].DMS_List,
@@ -90,7 +93,7 @@ createTable = function(json, tag_date_info) {
             targets: [6, 7],
             render: function(data, type, row) {
               if (type === "sort") {
-                return Date.parse(data.replace(/-/g, "/"));
+                return Date.parse(data.replace(/-/g, "/") + " GMT+0000");
               } else {
                 return highlightDate(data);
               }
@@ -193,8 +196,8 @@ optimezeTitleLength = function(text_string) {
 
 highlightDate = function(text_string) {
   var timeDiff, timeString;
-  timeDiff = timeDelta(Date.parse(text_string.replace(/-/g, "/")));
-  timeString = timeAgoInWords(Date.parse(text_string.replace(/-/g, "/")), 0);
+  timeDiff = timeDelta(Date.parse(text_string.replace(/-/g, "/") + " GMT+0000"));
+  timeString = timeAgoInWords(Date.parse(text_string.replace(/-/g, "/") + " GMT+0000"), 0);
   if (timeDiff < 60 * 60 * 24) {
     return '<font color="red"><b>' + timeString + '</b></font>';
   } else if (timeDiff < 60 * 60 * 24 * 3) {

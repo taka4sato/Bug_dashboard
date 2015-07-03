@@ -15,22 +15,15 @@ router.get '/', (req, res) ->
   mongo_query.open_db(DB_name).then((database) ->
     mongo_query.check_collection_exist database, Collection_name)
   .then((database) ->
-
-    #hack to show the latest date
-    #query_pipe = [ { $group:
-    #  _id: '$query_key'
-    #  count: '$sum': 1 } ]
     query_pipe = [ { $group:
       _id: '$query_key'
       lastQueryDate: '$max': '$query_date'
       count: '$sum': 1 } ]
-
     mongo_query.query_list database, query_pipe, Collection_name)
   .then((result) ->
     output = []
     for count of result
       target_URL = req.protocol + '://' + req.get('host') + '/v1/query?query_key=' + encodeURIComponent(result[count]['_id'])
-      #output.push 'query_key': result[count]['_id'], 'num': result[count]['count'], 'URL': target_URL
       output.push 'query_key': result[count]['_id'], 'num': result[count]['count'], 'lastQueryDate': result[count]['lastQueryDate'], 'URL': target_URL
     logger.debug output
     if req.query.hasOwnProperty('format') and req.query['format'] is 'json'

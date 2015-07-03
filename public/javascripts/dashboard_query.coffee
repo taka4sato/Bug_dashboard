@@ -10,7 +10,7 @@ startpoint_dashboard_query = (queryKey) ->
 
 createTable = (json, tag_date_info) ->
   if json.length isnt 0 and json[0].hasOwnProperty("query_date")
-    delta_time = timeAgoInWords(Date.parse(String(json[0].query_date).replace(/-/g, "/")), 1)
+    delta_time = timeAgoInWords(Date.parse(String(json[0].query_date).replace(/-/g, "/") + " GMT+0000"), 1)
     $("#DMS_update_time").append "(Query result as of <span class=\"underline\"><b>" + delta_time + "</b></span>)"
     $("#return_to_list_URL").append "<a href='" + window.location.protocol + "//" + window.location.host + "/v1/list'> back to Query List </a>"
 
@@ -22,8 +22,9 @@ createTable = (json, tag_date_info) ->
       console.log json
       console.log json[0]["query_key"]
 
-      $.each json[0].DMS_List, (i, item) ->
-        #console.log item
+      $.each json[0]["DMS_List"], (i, item) ->
+        console.log item["DMS_ID"]
+        console.log item["Modified_date"]
         #console.log "=========================="
 
       $("#table_placeholder").html "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>"
@@ -85,7 +86,7 @@ createTable = (json, tag_date_info) ->
           targets: [6,7]
           render: (data, type, row) ->
             if type == "sort"
-              return Date.parse(data.replace(/-/g, "/"))
+              return Date.parse(data.replace(/-/g, "/") + " GMT+0000")
             else
               return highlightDate(data)
         }]
@@ -182,8 +183,8 @@ optimezeTitleLength = (text_string) ->
       return  escapted_Title
 
 highlightDate = (text_string) ->
-  timeDiff =  timeDelta(Date.parse(text_string.replace(/-/g, "/")))
-  timeString = timeAgoInWords(Date.parse(text_string.replace(/-/g, "/")), 0)
+  timeDiff =  timeDelta(Date.parse(text_string.replace(/-/g, "/") + " GMT+0000"))
+  timeString = timeAgoInWords(Date.parse(text_string.replace(/-/g, "/") + " GMT+0000"), 0)
   if timeDiff < 60 * 60 * 24 # less than 1 day
     return '<font color="red"><b>' + timeString + '</b></font>'
   else if timeDiff < 60 * 60 * 24 * 3 # less than 3 days

@@ -3,23 +3,13 @@ mongodb = require('mongodb')
 router = express.Router()
 logger = require('./logger')
 mongo_query = require('./mongo_query')
-### POST API I/F.
 
- For this endpoint (/v1/post), "POST" works with "Content-Type" set to "application/json"
- http://localhost/v1/post
- http://ec2-54-64-81-68.ap-northeast-1.compute.amazonaws.com/v1/post
-
- For this endpoint (/v1/post), "GET" also works and dump the 5 items of "dms_test" collection
- http://localhost/v1/post
- http://ec2-54-64-81-68.ap-northeast-1.compute.amazonaws.com/v1/post
-###
 DB_name = 'posttest'
 collectionDMSQuery = 'dms_test'
 dbInstance = ''
 
-## test for expire, just set to 1hour
-#expireDuration = 535680 ## sec, 31 days = 3600 * 24 * 31
-expireDuration = 3600 ## sec, 31 days = 3600 * 24 * 31
+expireDuration = 5184000 ## sec, 60 days = 3600 * 24 * 60
+#expireDuration = 3600   ## sec, 1 hour
 
 router.post '/', (req, res) ->
   res.set 'Content-Type': 'charset=utf-8'
@@ -30,13 +20,7 @@ router.post '/', (req, res) ->
     pipe = "{'ttl_date':1}, {expireAfterSeconds: " + expireDuration + "}"
     mongo_query.create_index(dbInstance, collectionDMSQuery, pipe))
   .then(() ->
-    logger.error "================old================="
-    logger.error req.body
-    logger.error "================old================="
     req.body["ttl_date"] = new Date
-    logger.error "================new================="
-    logger.error req.body
-    logger.error "================new================="
     mongo_query.post_item dbInstance, collectionDMSQuery, req.body)
 
   ##.then((database) ->

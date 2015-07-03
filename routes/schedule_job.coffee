@@ -9,8 +9,8 @@ DB_name = 'posttest'
 collectionDMSQuery   = 'dms_test'
 collectionDailyCount = 'dms_daily_count'
 db_instance = ""
-expireDuration = 535680 ## sec, 31 days = 3600 * 24 * 31
-seeAsValidRecordDuration = 3600000000  # msec, 1h = 1000*60*60
+expireDuration = 5184000 ## sec, 60 days = 3600 * 24 * 60
+seeAsValidRecordDuration = 7200000  # msec, 2h = 1000*60*60*2
 
 mongo_query.open_db(DB_name).then((database) ->
   mongo_query.check_collection_exist database, collectionDailyCount)
@@ -25,7 +25,7 @@ mongo_query.open_db(DB_name).then((database) ->
 
 ## currently every 1 hour (when xx:30, it is invoked)
 ## if you want to execute job every 1 mins, just set to "*/1 * * * *"
-j = schedule.scheduleJob('*/1 * * * *', ->
+j = schedule.scheduleJob('* 30 * * *', ->
 
   date_string = getDateString(new Date)
   logger.error "schedule job invoked : " + date_string
