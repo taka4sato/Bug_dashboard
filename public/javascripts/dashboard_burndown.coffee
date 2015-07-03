@@ -14,19 +14,16 @@ startpoint_dashboard_burndown = (queryKey) ->
     ###
 
     #testJSON = '[{"query_date":"2015-07-02-13-43","ttl_date":"2015-07-02T04:43:00.655Z","DMS_count":2,"query_key":"Public Queries/A&SD/InfoEyeTest/Info Eye IA Device Applications (active)","DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-42","ttl_date":"2015-07-02T04:42:00.649Z","DMS_count":2,"query_key":"TestQueryKey","DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-41","ttl_date":"2015-07-02T04:41:00.665Z","DMS_count":2,"query_key":"Public Queries/A&SD/InfoEyeTest/Info Eye IA Device Applications (active)","DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-40","ttl_date":"2015-07-02T04:40:00.667Z","DMS_count":2,"query_key":"Public Queries/A&SD/InfoEyeTest/Info Eye IA Device Applications (active)","DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-39","ttl_date":"2015-07-02T04:39:00.622Z","DMS_count":2,"query_key":"Public Queries/A&SD/InfoEyeTest/Info Eye IA Device Applications (active)","DMS_List":["DMS06355888","DMS06423265"]}]'
-    testJSON = '[{"query_date":"2015-07-02-13-43", "DMS_count":2, "DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-41", "DMS_count":2, "DMS_List":["DMS06355888","DMS06423265"]}]'
-
+    #testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":2, "DMS_List":["DMS06355888","DMS06423265"]}]'
+    #testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]}]'
+    testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]}]'
+    #testJSON = '[]'
     highChartObject = new HighChartObjects(testJSON)
-
-    DMSChartDate = ["6/26", "6/27", "6/28", "6/29", "6/30", "7/1", "7/2"]
-    DMSChartTotalItem = [22, 22, 22, 22, 22, 22, 22]
-    DMSChartNewItem = [0,0,0,0,0,0,0]
-    DMSChartFixedItem = [0,0,0,0,0,0,0]
 
     $('#chart_placeholder').highcharts
       chart: type: 'line'
       title: text: 'DMS burndown chart'
-      xAxis: categories: DMSChartDate
+      xAxis: categories: highChartObject.chartDateArray
       yAxis:
         min: 0
         title: text: '# of DMS'
@@ -44,55 +41,102 @@ startpoint_dashboard_burndown = (queryKey) ->
         {
           yAxis: 0
           name: 'Total DMS #'
-          data: DMSChartTotalItem
+          data: highChartObject.chartNumOfTotalDMSArray
         }
         {
           yAxis: 0
           name: 'New DMS #'
-          data: DMSChartNewItem
+          data: highChartObject.chartNumOfNewDMSArray
         }
         {
           yAxis: 0
           name: 'Fixed DMS #'
-          data: DMSChartFixedItem
+          data: highChartObject.chartNumOfFixedDMSArray
         }
       ]
     return
 
 class HighChartObjects
   originalJSON = ""
-  complimentaryJSONArray = []
+  timezoneOffset = (new Date).getTimezoneOffset()
+  expectedDuration = 1000*3600*24   # 1 day = 1000 msec * 3600 * 24
+  chartDateArray: []
+  chartNumOfTotalDMSArray: []
+  chartNumOfNewDMSArray  : []
+  chartNumOfFixedDMSArray: []
 
   constructor: (json)->
-    originalJSON = JSON.parse(json)
-    expectedDuration = 1000*60   # 1 mins = 1000 * 60
+    if $.isEmptyObject(JSON.parse(json)) != true
+      originalJSON = JSON.parse(json)
+      originalJSON = _complimentDate.call @, originalJSON
+      _createChartElement.call @, originalJSON
+
+      console.log originalJSON
+      console.log "date:" + this.chartDateArray
+      console.log "TTL#:" + this.chartNumOfTotalDMSArray
+      console.log "New#:" + this.chartNumOfNewDMSArray
+      console.log "Fix#:" + this.chartNumOfFixedDMSArray
+    else
+      console.log "there is no data.."
+
+  ## @private class
+  _createChartElement = (originalJSON)->
+    for item, count in originalJSON
+      this.chartDateArray.push(item["query_date"])
+      this.chartNumOfTotalDMSArray.push(item["DMS_List"].length)
+
+      if originalJSON.length == 1 or count == 0
+        this.chartNumOfNewDMSArray.push(0)
+        this.chartNumOfFixedDMSArray.push(0)
+
+      else
+        numOfNewFixedItem = _compareDMSList.call(@, originalJSON[count-1]["DMS_List"], originalJSON[count]["DMS_List"])
+        this.chartNumOfFixedDMSArray.push (numOfNewFixedItem[1])
+        this.chartNumOfNewDMSArray.push(numOfNewFixedItem[0])
+
+  ## @private class
+  _compareDMSList = (originalList, targetList)->
+    numOfNewItem   = 0
+    numOfFixedItem = 0
+
+    for item in originalList
+      if targetList.indexOf(item) == -1
+        numOfFixedItem++
+
+    for item in targetList
+      if originalList.indexOf(item) == -1
+        numOfNewItem++
+
+    return [numOfNewItem, numOfFixedItem]
+
+  ## @private class
+  _complimentDate = (originalJSON)->
+    complimentaryJSON = []
 
     for item, count in originalJSON
-      momentDate = moment(item["query_date"], "YYYY-MM-DD-hh-mm").utc()
-      temp_moment = momentDate.subtract(5, "minutes").utc()
-      console.log "==============================="
-      console.log "1 : " + item["query_date"]
-      console.log "2 : " + momentDate
-      console.log momentDate
-      console.log "3 : " + momentDate.format("YYYY-MM-DD-hh-mm")
-      console.log "4 : " + momentDate.subtract(5, "minutes").utc()
-      console.log "5 : " + momentDate.subtract(5, "minutes").utc().format("YYYY-MM-DD-hh-mm")
+      momentDate = moment(item["query_date"], "YYYY-MM-DD").utc().subtract(timezoneOffset, "m")
 
-      ###
       if count !=  originalJSON.length - 1
-        momentDateNext =  moment(originalJSON[count+1]["query_date"], "YYYY-MM-DD-hh-mm")
+        momentDateNext =  moment(originalJSON[count+1]["query_date"], "YYYY-MM-DD").utc().subtract(timezoneOffset, "m")
 
         # in the case there are missing data
-        delta = Math.floor ((momentDate.diff(momentDateNext) / expectedDuration) - 1)
-        if delta != 0
-          i = 0
+        delta = momentDateNext.diff(momentDate) / expectedDuration
+        #console.log "delta = " + delta
+        if delta != 1
+          i = 1
           while i < delta
+            complimentaryJSONTemp = JSON.parse(JSON.stringify(item))
+            complimentaryJSONTemp["query_date"] = momentDate.add(1, "d").format("YYYY-MM-DD")
+            complimentaryJSON.push (complimentaryJSONTemp)
             i++
-            console.log "hoge"
-            complimentaryJSON = JSON.parse(JSON.stringify(item));
-            console.log item
-            complimentaryJSON["query_date"] = momentDate.subtract(5, "minutes").format("YYYY-MM-DD-hh-mm")
-            console.log complimentaryJSON
-            console.log "==============================="
 
-      ###
+    for item  in complimentaryJSON
+      originalJSON.push(item)
+
+    originalJSON.sort (a,b) ->
+      if a["query_date"] < b["query_date"]
+        return -1
+      if a["query_date"] > b["query_date"]
+        return 1
+
+    return originalJSON

@@ -13,13 +13,9 @@ startpoint_dashboard_burndown = function(queryKey) {
       console.log item["query_date"]
       console.log "=========================="
      */
-    var DMSChartDate, DMSChartFixedItem, DMSChartNewItem, DMSChartTotalItem, highChartObject, testJSON;
-    testJSON = '[{"query_date":"2015-07-02-13-43", "DMS_count":2, "DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-41", "DMS_count":2, "DMS_List":["DMS06355888","DMS06423265"]}]';
+    var highChartObject, testJSON;
+    testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]}]';
     highChartObject = new HighChartObjects(testJSON);
-    DMSChartDate = ["6/26", "6/27", "6/28", "6/29", "6/30", "7/1", "7/2"];
-    DMSChartTotalItem = [22, 22, 22, 22, 22, 22, 22];
-    DMSChartNewItem = [0, 0, 0, 0, 0, 0, 0];
-    DMSChartFixedItem = [0, 0, 0, 0, 0, 0, 0];
     $('#chart_placeholder').highcharts({
       chart: {
         type: 'line'
@@ -28,7 +24,7 @@ startpoint_dashboard_burndown = function(queryKey) {
         text: 'DMS burndown chart'
       },
       xAxis: {
-        categories: DMSChartDate
+        categories: highChartObject.chartDateArray
       },
       yAxis: {
         min: 0,
@@ -64,15 +60,15 @@ startpoint_dashboard_burndown = function(queryKey) {
         {
           yAxis: 0,
           name: 'Total DMS #',
-          data: DMSChartTotalItem
+          data: highChartObject.chartNumOfTotalDMSArray
         }, {
           yAxis: 0,
           name: 'New DMS #',
-          data: DMSChartNewItem
+          data: highChartObject.chartNumOfNewDMSArray
         }, {
           yAxis: 0,
           name: 'Fixed DMS #',
-          data: DMSChartFixedItem
+          data: highChartObject.chartNumOfFixedDMSArray
         }
       ]
     });
@@ -80,47 +76,109 @@ startpoint_dashboard_burndown = function(queryKey) {
 };
 
 HighChartObjects = (function() {
-  var complimentaryJSONArray, originalJSON;
+  var expectedDuration, originalJSON, timezoneOffset, _compareDMSList, _complimentDate, _createChartElement;
 
   originalJSON = "";
 
-  complimentaryJSONArray = [];
+  timezoneOffset = (new Date).getTimezoneOffset();
+
+  expectedDuration = 1000 * 3600 * 24;
+
+  HighChartObjects.prototype.chartDateArray = [];
+
+  HighChartObjects.prototype.chartNumOfTotalDMSArray = [];
+
+  HighChartObjects.prototype.chartNumOfNewDMSArray = [];
+
+  HighChartObjects.prototype.chartNumOfFixedDMSArray = [];
 
   function HighChartObjects(json) {
-    var count, expectedDuration, item, momentDate, temp_moment, _i, _len;
-    originalJSON = JSON.parse(json);
-    expectedDuration = 1000 * 60;
-    for (count = _i = 0, _len = originalJSON.length; _i < _len; count = ++_i) {
-      item = originalJSON[count];
-      momentDate = moment(item["query_date"], "YYYY-MM-DD-hh-mm").utc();
-      temp_moment = momentDate.subtract(5, "minutes").utc();
-      console.log("===============================");
-      console.log("1 : " + item["query_date"]);
-      console.log("2 : " + momentDate);
-      console.log(momentDate);
-      console.log("3 : " + momentDate.format("YYYY-MM-DD-hh-mm"));
-      console.log("4 : " + momentDate.subtract(5, "minutes").utc());
-      console.log("5 : " + momentDate.subtract(5, "minutes").utc().format("YYYY-MM-DD-hh-mm"));
-
-      /*
-      if count !=  originalJSON.length - 1
-        momentDateNext =  moment(originalJSON[count+1]["query_date"], "YYYY-MM-DD-hh-mm")
-      
-         * in the case there are missing data
-        delta = Math.floor ((momentDate.diff(momentDateNext) / expectedDuration) - 1)
-        if delta != 0
-          i = 0
-          while i < delta
-            i++
-            console.log "hoge"
-            complimentaryJSON = JSON.parse(JSON.stringify(item));
-            console.log item
-            complimentaryJSON["query_date"] = momentDate.subtract(5, "minutes").format("YYYY-MM-DD-hh-mm")
-            console.log complimentaryJSON
-            console.log "==============================="
-       */
+    if ($.isEmptyObject(JSON.parse(json)) !== true) {
+      originalJSON = JSON.parse(json);
+      originalJSON = _complimentDate.call(this, originalJSON);
+      _createChartElement.call(this, originalJSON);
+      console.log(originalJSON);
+      console.log("date:" + this.chartDateArray);
+      console.log("TTL#:" + this.chartNumOfTotalDMSArray);
+      console.log("New#:" + this.chartNumOfNewDMSArray);
+      console.log("Fix#:" + this.chartNumOfFixedDMSArray);
+    } else {
+      console.log("there is no data..");
     }
   }
+
+  _createChartElement = function(originalJSON) {
+    var count, item, numOfNewFixedItem, _i, _len, _results;
+    _results = [];
+    for (count = _i = 0, _len = originalJSON.length; _i < _len; count = ++_i) {
+      item = originalJSON[count];
+      this.chartDateArray.push(item["query_date"]);
+      this.chartNumOfTotalDMSArray.push(item["DMS_List"].length);
+      if (originalJSON.length === 1 || count === 0) {
+        this.chartNumOfNewDMSArray.push(0);
+        _results.push(this.chartNumOfFixedDMSArray.push(0));
+      } else {
+        numOfNewFixedItem = _compareDMSList.call(this, originalJSON[count - 1]["DMS_List"], originalJSON[count]["DMS_List"]);
+        this.chartNumOfFixedDMSArray.push(numOfNewFixedItem[1]);
+        _results.push(this.chartNumOfNewDMSArray.push(numOfNewFixedItem[0]));
+      }
+    }
+    return _results;
+  };
+
+  _compareDMSList = function(originalList, targetList) {
+    var item, numOfFixedItem, numOfNewItem, _i, _j, _len, _len1;
+    numOfNewItem = 0;
+    numOfFixedItem = 0;
+    for (_i = 0, _len = originalList.length; _i < _len; _i++) {
+      item = originalList[_i];
+      if (targetList.indexOf(item) === -1) {
+        numOfFixedItem++;
+      }
+    }
+    for (_j = 0, _len1 = targetList.length; _j < _len1; _j++) {
+      item = targetList[_j];
+      if (originalList.indexOf(item) === -1) {
+        numOfNewItem++;
+      }
+    }
+    return [numOfNewItem, numOfFixedItem];
+  };
+
+  _complimentDate = function(originalJSON) {
+    var complimentaryJSON, complimentaryJSONTemp, count, delta, i, item, momentDate, momentDateNext, _i, _j, _len, _len1;
+    complimentaryJSON = [];
+    for (count = _i = 0, _len = originalJSON.length; _i < _len; count = ++_i) {
+      item = originalJSON[count];
+      momentDate = moment(item["query_date"], "YYYY-MM-DD").utc().subtract(timezoneOffset, "m");
+      if (count !== originalJSON.length - 1) {
+        momentDateNext = moment(originalJSON[count + 1]["query_date"], "YYYY-MM-DD").utc().subtract(timezoneOffset, "m");
+        delta = momentDateNext.diff(momentDate) / expectedDuration;
+        if (delta !== 1) {
+          i = 1;
+          while (i < delta) {
+            complimentaryJSONTemp = JSON.parse(JSON.stringify(item));
+            complimentaryJSONTemp["query_date"] = momentDate.add(1, "d").format("YYYY-MM-DD");
+            complimentaryJSON.push(complimentaryJSONTemp);
+            i++;
+          }
+        }
+      }
+    }
+    for (_j = 0, _len1 = complimentaryJSON.length; _j < _len1; _j++) {
+      item = complimentaryJSON[_j];
+      originalJSON.push(item);
+    }
+    originalJSON.sort(function(a, b) {
+      if (a["query_date"] < b["query_date"]) {
+        return -1;
+      }
+      if (a["query_date"] > b["query_date"]) {
+        return 1;
+      }
+    });
+    return originalJSON;
+  };
 
   return HighChartObjects;
 

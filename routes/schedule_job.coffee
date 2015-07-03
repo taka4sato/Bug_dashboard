@@ -23,9 +23,9 @@ mongo_query.open_db(DB_name).then((database) ->
   logger.error error
 
 
-## currently every 1 hour (when xx:30, it is invoked)
+## currently invoked every day at 4:00am
 ## if you want to execute job every 1 mins, just set to "*/1 * * * *"
-j = schedule.scheduleJob('* 30 * * *', ->
+j = schedule.scheduleJob('00 4 * * *', ->
 
   date_string = getDateString(new Date)
   logger.error "schedule job invoked : " + date_string

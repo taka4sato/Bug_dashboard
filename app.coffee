@@ -12,7 +12,6 @@ list   = require("./routes/list")
 schedule_job   = require("./routes/schedule_job")
 edit_tag_date   = require("./routes/edit_tag_date")
 daily_count   = require("./routes/daily_count")
-mongo1 = require("./routes/mongo1")
 
 app = express()
 
@@ -34,7 +33,6 @@ app.use "/v1/post", post
 app.use "/v1/list", list
 app.use "/v1/edit_tag_date", edit_tag_date
 app.use "/v1/daily_count", daily_count
-app.use "/v1/mongo1", mongo1
 
 # catch 404 and forward to error handler
 app.use (req, res, next) ->
