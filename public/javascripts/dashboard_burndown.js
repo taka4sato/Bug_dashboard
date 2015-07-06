@@ -5,15 +5,14 @@ startpoint_dashboard_burndown = function(queryKey) {
   $("#Page_Title").append("<span class=\"underline\">" + decodeURIComponent(queryKey) + "</span>");
   targetURL = window.location.protocol + "//" + window.location.host + "/v1/daily_count?query_key=" + queryKey + "&format=json";
   return $.getJSON(targetURL, function(json) {
-
-    /*
-    $.each json, (count, item) ->
-      console.log item["query_key"]
-      console.log item["DMS_count"]
-      console.log item["query_date"]
-      console.log "=========================="
-     */
     var highChartObject, testJSON;
+    console.log(json);
+    $.each(json, function(count, item) {
+      console.log(item["query_key"]);
+      console.log(item["DMS_count"]);
+      console.log(item["query_date"]);
+      return console.log("==========================");
+    });
     testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]}]';
     highChartObject = new HighChartObjects(testJSON);
     $('#chart_placeholder').highcharts({
@@ -98,10 +97,10 @@ HighChartObjects = (function() {
       originalJSON = _complimentDate.call(this, originalJSON);
       _createChartElement.call(this, originalJSON);
       console.log(originalJSON);
-      console.log("date:" + this.chartDateArray);
-      console.log("TTL#:" + this.chartNumOfTotalDMSArray);
-      console.log("New#:" + this.chartNumOfNewDMSArray);
-      console.log("Fix#:" + this.chartNumOfFixedDMSArray);
+      console.log("Date: " + this.chartDateArray);
+      console.log("TTL#: " + this.chartNumOfTotalDMSArray);
+      console.log("New#: " + this.chartNumOfNewDMSArray);
+      console.log("Fix#: " + this.chartNumOfFixedDMSArray);
     } else {
       console.log("there is no data..");
     }

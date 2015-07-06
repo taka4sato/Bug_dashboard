@@ -3,15 +3,13 @@ startpoint_dashboard_burndown = (queryKey) ->
   targetURL = window.location.protocol + "//" + window.location.host + "/v1/daily_count?query_key=" + queryKey + "&format=json"
 
   $.getJSON targetURL, (json) ->
-    #console.log json
+    console.log json
 
-    ###
     $.each json, (count, item) ->
       console.log item["query_key"]
       console.log item["DMS_count"]
       console.log item["query_date"]
       console.log "=========================="
-    ###
 
     #testJSON = '[{"query_date":"2015-07-02-13-43","ttl_date":"2015-07-02T04:43:00.655Z","DMS_count":2,"query_key":"Public Queries/A&SD/InfoEyeTest/Info Eye IA Device Applications (active)","DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-42","ttl_date":"2015-07-02T04:42:00.649Z","DMS_count":2,"query_key":"TestQueryKey","DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-41","ttl_date":"2015-07-02T04:41:00.665Z","DMS_count":2,"query_key":"Public Queries/A&SD/InfoEyeTest/Info Eye IA Device Applications (active)","DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-40","ttl_date":"2015-07-02T04:40:00.667Z","DMS_count":2,"query_key":"Public Queries/A&SD/InfoEyeTest/Info Eye IA Device Applications (active)","DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-39","ttl_date":"2015-07-02T04:39:00.622Z","DMS_count":2,"query_key":"Public Queries/A&SD/InfoEyeTest/Info Eye IA Device Applications (active)","DMS_List":["DMS06355888","DMS06423265"]}]'
     #testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":2, "DMS_List":["DMS06355888","DMS06423265"]}]'
@@ -72,27 +70,27 @@ class HighChartObjects
       _createChartElement.call @, originalJSON
 
       console.log originalJSON
-      console.log "date:" + this.chartDateArray
-      console.log "TTL#:" + this.chartNumOfTotalDMSArray
-      console.log "New#:" + this.chartNumOfNewDMSArray
-      console.log "Fix#:" + this.chartNumOfFixedDMSArray
+      console.log "Date: #{@chartDateArray}"
+      console.log "TTL#: #{@chartNumOfTotalDMSArray}"
+      console.log "New#: #{@chartNumOfNewDMSArray}"
+      console.log "Fix#: #{@chartNumOfFixedDMSArray}"
     else
       console.log "there is no data.."
 
   ## @private class
   _createChartElement = (originalJSON)->
     for item, count in originalJSON
-      this.chartDateArray.push(item["query_date"])
-      this.chartNumOfTotalDMSArray.push(item["DMS_List"].length)
+      @chartDateArray.push(item["query_date"])
+      @chartNumOfTotalDMSArray.push(item["DMS_List"].length)
 
       if originalJSON.length == 1 or count == 0
-        this.chartNumOfNewDMSArray.push(0)
-        this.chartNumOfFixedDMSArray.push(0)
+        @chartNumOfNewDMSArray.push(0)
+        @chartNumOfFixedDMSArray.push(0)
 
       else
         numOfNewFixedItem = _compareDMSList.call(@, originalJSON[count-1]["DMS_List"], originalJSON[count]["DMS_List"])
-        this.chartNumOfFixedDMSArray.push (numOfNewFixedItem[1])
-        this.chartNumOfNewDMSArray.push(numOfNewFixedItem[0])
+        @chartNumOfFixedDMSArray.push (numOfNewFixedItem[1])
+        @chartNumOfNewDMSArray.push(numOfNewFixedItem[0])
 
   ## @private class
   _compareDMSList = (originalList, targetList)->
