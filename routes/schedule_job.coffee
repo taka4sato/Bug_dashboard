@@ -97,13 +97,7 @@ getDateString = (dateInfo) ->
   day =  dateInfo.getDate()
   if (day < 10)
     day = '0' + day
-  hour =  dateInfo.getHours()
-  if (hour < 10)
-    hour = '0' + hour
-  min =  dateInfo.getMinutes()
-  if (min < 10)
-    min = '0' + min
 
-  return [year, month, day, hour, min].join('-')
+  return [year, month, day].join('-')
 
 module.exports = router
