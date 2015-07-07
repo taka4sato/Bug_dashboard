@@ -1,19 +1,13 @@
 var HighChartObjects, startpoint_dashboard_burndown;
 
-startpoint_dashboard_burndown = function(queryKey) {
+startpoint_dashboard_burndown = function(queryKey, chartDuration) {
   var targetURL;
   $("#Page_Title").append("<span class=\"underline\">" + decodeURIComponent(queryKey) + "</span>");
-  targetURL = window.location.protocol + "//" + window.location.host + "/v1/daily_count?query_key=" + queryKey + "&format=json";
+  targetURL = window.location.protocol + "//" + window.location.host + "/v1/daily_count?query_key=" + queryKey + "&format=json&query_duration=" + chartDuration;
   return $.getJSON(targetURL, function(json) {
     var highChartObject, testJSON;
     console.log(json);
-    $.each(json, function(count, item) {
-      console.log(item["query_key"]);
-      console.log(item["DMS_count"]);
-      console.log(item["query_date"]);
-      return console.log("==========================");
-    });
-    testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]}]';
+    testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]}]';
     highChartObject = new HighChartObjects(testJSON);
     $('#chart_placeholder').highcharts({
       chart: {
@@ -75,7 +69,7 @@ startpoint_dashboard_burndown = function(queryKey) {
 };
 
 HighChartObjects = (function() {
-  var expectedDuration, originalJSON, timezoneOffset, _compareDMSList, _complimentDate, _createChartElement;
+  var expectedDuration, originalJSON, timezoneOffset, _compareDMSList, _complimentDate, _createChartElement, _removeDuplicateItems;
 
   originalJSON = "";
 
@@ -94,6 +88,7 @@ HighChartObjects = (function() {
   function HighChartObjects(json) {
     if ($.isEmptyObject(JSON.parse(json)) !== true) {
       originalJSON = JSON.parse(json);
+      originalJSON = _removeDuplicateItems.call(this, originalJSON);
       originalJSON = _complimentDate.call(this, originalJSON);
       _createChartElement.call(this, originalJSON);
       console.log(originalJSON);
@@ -105,6 +100,30 @@ HighChartObjects = (function() {
       console.log("there is no data..");
     }
   }
+
+  _removeDuplicateItems = function(originalJSON) {
+    var count, duplicateRemovedJSON, item, _i, _len;
+    duplicateRemovedJSON = [];
+    originalJSON.sort(function(a, b) {
+      if (a["query_date"] < b["query_date"]) {
+        return -1;
+      }
+      if (a["query_date"] > b["query_date"]) {
+        return 1;
+      }
+    });
+    for (count = _i = 0, _len = originalJSON.length; _i < _len; count = ++_i) {
+      item = originalJSON[count];
+      if (count !== originalJSON.length - 1) {
+        if (originalJSON[count]["query_date"] !== originalJSON[count + 1]["query_date"]) {
+          duplicateRemovedJSON.push(item);
+        }
+      } else {
+        duplicateRemovedJSON.push(item);
+      }
+    }
+    return duplicateRemovedJSON;
+  };
 
   _createChartElement = function(originalJSON) {
     var count, item, numOfNewFixedItem, _i, _len, _results;

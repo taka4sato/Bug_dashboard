@@ -1,5 +1,6 @@
 express = require('express')
 mongodb = require('mongodb')
+moment  = require('moment')
 router = express.Router()
 logger = require('./logger')
 mongo_query = require('./mongo_query')
@@ -9,8 +10,30 @@ DB_name = 'posttest'
 Collection_name = 'dms_daily_count'
 router.get '/', (req, res) ->
 
+  # case request has all of 'query_key', 'query_duration', 'format' params
+  if req.query.query_key? and req.query.query_duration? and req.query.format? and req.query.format is 'json'
+    duration = req.query['query_duration']
+    path = req.query['query_key']
+
+    mongo_query.open_db(DB_name)
+    .then((database) ->
+      date_string =  moment().utc().subtract(duration, "d").format("YYYY-MM-DD")
+      pipe = 'query_key': path
+      'query_date': '$gte': date_string
+      mongo_query.query_by_condition database, Collection_name, pipe)
+    .then((items) ->
+      #logger.error JSON.stringify(items, null, "  ")
+      res.set 'Content-Type': 'application/json; charset=utf-8'
+      res.set 'Cache-Control': 'no-cache, max-age=0'
+      res.end JSON.stringify(items)
+      return)
+    .catch (error) ->
+      logger.error error
+      res.end 'Fail to connect to DB : ' + error
+      return
+
   # case request has both 'query_key' and 'format' params
-  if req.query.hasOwnProperty('query_key') and req.query.hasOwnProperty('format') and req.query['format'] is 'json'
+  else if req.query.query_key? and req.query.format? and req.query.format is 'json'
     path = req.query['query_key']
     mongo_query.open_db(DB_name)
     .then((database) ->

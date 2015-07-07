@@ -17,15 +17,13 @@ mongo_query.open_db(DB_name).then((database) ->
 .then((database) ->
   pipe = "{'ttl_date':1}, {expireAfterSeconds: " + expireDuration + "}"
   mongo_query.create_index(database, collectionDailyCount, pipe))
-.then((result) ->
-  logger.error(result))
 .catch (error) ->
   logger.error error
 
 
-## currently invoked every day at 4:00am
+## currently invoked every day at 22:00 UTC (= 7:00 JST)
 ## if you want to execute job every 1 mins, just set to "*/1 * * * *"
-j = schedule.scheduleJob('00 4 * * *', ->
+j = schedule.scheduleJob('00 22 * * *', ->
 
   date_string = getDateString(new Date)
   logger.error "schedule job invoked : " + date_string
@@ -84,7 +82,7 @@ j = schedule.scheduleJob('00 4 * * *', ->
 .then((items) ->
   logger.error "==last 5 items==================="
   for item in items
-    logger.error JSON.stringify(item["query_date"])
+    logger.error JSON.stringify(item["query_date"], null, "  ")
   logger.error "==last 5 items===================")
 ###
 

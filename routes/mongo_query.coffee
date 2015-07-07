@@ -29,6 +29,18 @@ exports.dump_one = (database, Coll_name, path, count) ->
     return
   )
 
+exports.query_by_condition = (database, Coll_name, query_pipe) ->
+  new promise((resolve, reject) ->
+    collection = database.collection(Coll_name)
+    collection.find(query_pipe).toArray (error, items) ->
+      unless error
+        resolve items
+      else
+        reject error
+      return
+    return
+  )
+
 exports.create_index = (database, Coll_name, pipe) ->
   new promise((resolve, reject) ->
     collection = database.collection(Coll_name)
