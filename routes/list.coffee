@@ -25,7 +25,6 @@ router.get '/', (req, res) ->
     for count of result
       target_URL = req.protocol + '://' + req.get('host') + '/v1/query?query_key=' + encodeURIComponent(result[count]['_id'])
       output.push 'query_key': result[count]['_id'], 'num': result[count]['count'], 'lastQueryDate': result[count]['lastQueryDate'], 'URL': target_URL
-    logger.debug output
     if req.query.hasOwnProperty('format') and req.query['format'] is 'json'
       res.set 'Content-Type': 'application/json; charset=utf-8'
       res.set 'Cache-Control': 'no-cache, max-age=0'
