@@ -4,14 +4,8 @@ startpoint_dashboard_burndown = (queryKey, chartDuration) ->
 
   $.getJSON targetURL, (json) ->
     console.log json
-
-    #$.each json, (count, item) ->
-    #  console.log item["query_key"]
-    #  console.log item["DMS_count"]
-    #  console.log "=========================="
-
-    #testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]}]'
     highChartObject = new HighChartObjects(json)
+
 
     $('#chart_placeholder').highcharts
       chart: type: 'line'
@@ -19,6 +13,7 @@ startpoint_dashboard_burndown = (queryKey, chartDuration) ->
       xAxis: categories: highChartObject.chartDateArray
       yAxis:
         min: 0
+        title: text: '# of DMS'
         title: text: '# of DMS'
       tooltip: shared: true
       navigation: buttonOptions: enabled: true
@@ -59,8 +54,8 @@ class HighChartObjects
   chartNumOfFixedDMSArray: []
 
   constructor: (json)->
-    if $.isEmptyObject(JSON.parse(json)) != true
-      originalJSON = JSON.parse(json)
+    if $.isEmptyObject(json) != true
+      originalJSON = json
       originalJSON = _removeDuplicateItems.call @, originalJSON
       originalJSON = _complimentDate.call @, originalJSON
       _createChartElement.call @, originalJSON
@@ -72,6 +67,8 @@ class HighChartObjects
       #console.log "Fix#: #{@chartNumOfFixedDMSArray}"
     else
       console.log "there is no data.."
+
+    return
 
   ## @private class
   _removeDuplicateItems = (originalJSON)->

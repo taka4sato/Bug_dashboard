@@ -22,6 +22,9 @@ startpoint_dashboard_burndown = function(queryKey, chartDuration) {
         min: 0,
         title: {
           text: '# of DMS'
+        },
+        title: {
+          text: '# of DMS'
         }
       },
       tooltip: {
@@ -85,14 +88,15 @@ HighChartObjects = (function() {
   HighChartObjects.prototype.chartNumOfFixedDMSArray = [];
 
   function HighChartObjects(json) {
-    if ($.isEmptyObject(JSON.parse(json)) !== true) {
-      originalJSON = JSON.parse(json);
+    if ($.isEmptyObject(json) !== true) {
+      originalJSON = json;
       originalJSON = _removeDuplicateItems.call(this, originalJSON);
       originalJSON = _complimentDate.call(this, originalJSON);
       _createChartElement.call(this, originalJSON);
     } else {
       console.log("there is no data..");
     }
+    return;
   }
 
   _removeDuplicateItems = function(originalJSON) {
