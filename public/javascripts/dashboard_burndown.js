@@ -5,10 +5,9 @@ startpoint_dashboard_burndown = function(queryKey, chartDuration) {
   $("#Page_Title").append("<span class=\"underline\">" + decodeURIComponent(queryKey) + "</span>");
   targetURL = window.location.protocol + "//" + window.location.host + "/v1/daily_count?query_key=" + queryKey + "&format=json&query_duration=" + chartDuration;
   return $.getJSON(targetURL, function(json) {
-    var highChartObject, testJSON;
+    var highChartObject;
     console.log(json);
-    testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]}]';
-    highChartObject = new HighChartObjects(testJSON);
+    highChartObject = new HighChartObjects(json);
     $('#chart_placeholder').highcharts({
       chart: {
         type: 'line'
@@ -91,11 +90,6 @@ HighChartObjects = (function() {
       originalJSON = _removeDuplicateItems.call(this, originalJSON);
       originalJSON = _complimentDate.call(this, originalJSON);
       _createChartElement.call(this, originalJSON);
-      console.log(originalJSON);
-      console.log("Date: " + this.chartDateArray);
-      console.log("TTL#: " + this.chartNumOfTotalDMSArray);
-      console.log("New#: " + this.chartNumOfNewDMSArray);
-      console.log("Fix#: " + this.chartNumOfFixedDMSArray);
     } else {
       console.log("there is no data..");
     }

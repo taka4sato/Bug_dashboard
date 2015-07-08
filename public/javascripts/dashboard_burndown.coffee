@@ -8,15 +8,10 @@ startpoint_dashboard_burndown = (queryKey, chartDuration) ->
     #$.each json, (count, item) ->
     #  console.log item["query_key"]
     #  console.log item["DMS_count"]
-    #  console.log item["query_date"]
     #  console.log "=========================="
 
-    #testJSON = '[{"query_date":"2015-07-02-13-43","ttl_date":"2015-07-02T04:43:00.655Z","DMS_count":2,"query_key":"Public Queries/A&SD/InfoEyeTest/Info Eye IA Device Applications (active)","DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-42","ttl_date":"2015-07-02T04:42:00.649Z","DMS_count":2,"query_key":"TestQueryKey","DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-41","ttl_date":"2015-07-02T04:41:00.665Z","DMS_count":2,"query_key":"Public Queries/A&SD/InfoEyeTest/Info Eye IA Device Applications (active)","DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-40","ttl_date":"2015-07-02T04:40:00.667Z","DMS_count":2,"query_key":"Public Queries/A&SD/InfoEyeTest/Info Eye IA Device Applications (active)","DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-02-13-39","ttl_date":"2015-07-02T04:39:00.622Z","DMS_count":2,"query_key":"Public Queries/A&SD/InfoEyeTest/Info Eye IA Device Applications (active)","DMS_List":["DMS06355888","DMS06423265"]}]'
-    #testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888","DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":2, "DMS_List":["DMS06355888","DMS06423265"]}]'
-    #testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]}]'
-    #testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]}]'
-    testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]}]'
-    highChartObject = new HighChartObjects(testJSON)
+    #testJSON = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]}]'
+    highChartObject = new HighChartObjects(json)
 
     $('#chart_placeholder').highcharts
       chart: type: 'line'
@@ -70,11 +65,11 @@ class HighChartObjects
       originalJSON = _complimentDate.call @, originalJSON
       _createChartElement.call @, originalJSON
 
-      console.log originalJSON
-      console.log "Date: #{@chartDateArray}"
-      console.log "TTL#: #{@chartNumOfTotalDMSArray}"
-      console.log "New#: #{@chartNumOfNewDMSArray}"
-      console.log "Fix#: #{@chartNumOfFixedDMSArray}"
+      #console.log originalJSON
+      #console.log "Date: #{@chartDateArray}"
+      #console.log "TTL#: #{@chartNumOfTotalDMSArray}"
+      #console.log "New#: #{@chartNumOfNewDMSArray}"
+      #console.log "Fix#: #{@chartNumOfFixedDMSArray}"
     else
       console.log "there is no data.."
 

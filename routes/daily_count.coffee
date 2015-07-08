@@ -22,7 +22,7 @@ router.get '/', (req, res) ->
       'query_date': '$gte': date_string
       mongo_query.query_by_condition database, Collection_name, pipe)
     .then((items) ->
-      #logger.error JSON.stringify(items, null, "  ")
+      logger.error JSON.stringify(items, null, "  ")
       res.set 'Content-Type': 'application/json; charset=utf-8'
       res.set 'Cache-Control': 'no-cache, max-age=0'
       res.end JSON.stringify(items)
