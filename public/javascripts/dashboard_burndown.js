@@ -10,7 +10,7 @@ startpoint_dashboard_burndown = function(queryKey, chartDuration) {
     highChartObject = new HighChartObjects(json);
     $('#chart_placeholder').highcharts({
       chart: {
-        type: 'line'
+        type: 'column'
       },
       title: {
         text: 'DMS burndown chart'
@@ -20,9 +20,6 @@ startpoint_dashboard_burndown = function(queryKey, chartDuration) {
       },
       yAxis: {
         min: 0,
-        title: {
-          text: '# of DMS'
-        },
         title: {
           text: '# of DMS'
         }
@@ -44,7 +41,8 @@ startpoint_dashboard_burndown = function(queryKey, chartDuration) {
         enabled: false
       },
       plotOptions: {
-        line: {
+        column: {
+          stacking: 'normal',
           dataLabels: {
             enabled: true
           },
@@ -53,17 +51,17 @@ startpoint_dashboard_burndown = function(queryKey, chartDuration) {
       },
       series: [
         {
-          yAxis: 0,
-          name: 'Total DMS #',
-          data: highChartObject.chartNumOfTotalDMSArray
+          name: 'Remaining DMS #',
+          data: highChartObject.chartNumOfTotalDMS_NewDMSArray,
+          stack: 'ActiveIssues'
         }, {
-          yAxis: 0,
           name: 'New DMS #',
-          data: highChartObject.chartNumOfNewDMSArray
+          data: highChartObject.chartNumOfNewDMSArray,
+          stack: 'ActiveIssues'
         }, {
-          yAxis: 0,
           name: 'Fixed DMS #',
-          data: highChartObject.chartNumOfFixedDMSArray
+          data: highChartObject.chartNumOfFixedDMSArray,
+          stack: 'InactiveIssues'
         }
       ]
     });
@@ -87,12 +85,20 @@ HighChartObjects = (function() {
 
   HighChartObjects.prototype.chartNumOfFixedDMSArray = [];
 
+  HighChartObjects.prototype.chartNumOfTotalDMS_NewDMSArray = [];
+
   function HighChartObjects(json) {
     if ($.isEmptyObject(json) !== true) {
       originalJSON = json;
       originalJSON = _removeDuplicateItems.call(this, originalJSON);
       originalJSON = _complimentDate.call(this, originalJSON);
       _createChartElement.call(this, originalJSON);
+      console.log(originalJSON);
+      console.log("Date: " + this.chartDateArray);
+      console.log("TTL#: " + this.chartNumOfTotalDMSArray);
+      console.log("New#: " + this.chartNumOfNewDMSArray);
+      console.log("Fix#: " + this.chartNumOfFixedDMSArray);
+      console.log("TTL-New#: " + this.chartNumOfTotalDMS_NewDMSArray);
     } else {
       console.log("there is no data..");
     }
@@ -124,20 +130,26 @@ HighChartObjects = (function() {
   };
 
   _createChartElement = function(originalJSON) {
-    var count, item, numOfNewFixedItem, _i, _len, _results;
-    _results = [];
+    var TotalMinusNewDMS, count, item, numOfNewFixedItem, _i, _j, _len, _len1, _ref, _results;
     for (count = _i = 0, _len = originalJSON.length; _i < _len; count = ++_i) {
       item = originalJSON[count];
       this.chartDateArray.push(item["query_date"]);
       this.chartNumOfTotalDMSArray.push(item["DMS_List"].length);
       if (originalJSON.length === 1 || count === 0) {
         this.chartNumOfNewDMSArray.push(0);
-        _results.push(this.chartNumOfFixedDMSArray.push(0));
+        this.chartNumOfFixedDMSArray.push(0);
       } else {
         numOfNewFixedItem = _compareDMSList.call(this, originalJSON[count - 1]["DMS_List"], originalJSON[count]["DMS_List"]);
         this.chartNumOfFixedDMSArray.push(numOfNewFixedItem[1]);
-        _results.push(this.chartNumOfNewDMSArray.push(numOfNewFixedItem[0]));
+        this.chartNumOfNewDMSArray.push(numOfNewFixedItem[0]);
       }
+    }
+    _ref = this.chartNumOfTotalDMSArray;
+    _results = [];
+    for (count = _j = 0, _len1 = _ref.length; _j < _len1; count = ++_j) {
+      item = _ref[count];
+      TotalMinusNewDMS = this.chartNumOfTotalDMSArray[count] - this.chartNumOfNewDMSArray[count];
+      _results.push(this.chartNumOfTotalDMS_NewDMSArray.push(TotalMinusNewDMS));
     }
     return _results;
   };

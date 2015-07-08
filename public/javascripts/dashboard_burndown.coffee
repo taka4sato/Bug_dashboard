@@ -4,16 +4,18 @@ startpoint_dashboard_burndown = (queryKey, chartDuration) ->
 
   $.getJSON targetURL, (json) ->
     console.log json
+
+    #testJSON_string = '[{"query_date":"2015-07-02", "DMS_count":2, "DMS_List":["DMS06355888", "DMS06423265"]},{"query_date":"2015-07-05", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423265", "DMS06423277"]},{"query_date":"2015-07-07", "DMS_count":3, "DMS_List":["DMS06355888", "DMS06423277"]}]'
+    #json = JSON.parse(testJSON_string)
     highChartObject = new HighChartObjects(json)
 
 
     $('#chart_placeholder').highcharts
-      chart: type: 'line'
+      chart: type: 'column'
       title: text: 'DMS burndown chart'
       xAxis: categories: highChartObject.chartDateArray
       yAxis:
         min: 0
-        title: text: '# of DMS'
         title: text: '# of DMS'
       tooltip: shared: true
       navigation: buttonOptions: enabled: true
@@ -22,24 +24,25 @@ startpoint_dashboard_burndown = (queryKey, chartDuration) ->
         type: 'image/jpeg'
         scale: 2
       credits: enabled: false
-      plotOptions: line:
+      plotOptions: column:
+        stacking: 'normal'
         dataLabels: enabled: true
         enableMouseTracking: false
       series: [
         {
-          yAxis: 0
-          name: 'Total DMS #'
-          data: highChartObject.chartNumOfTotalDMSArray
+          name: 'Remaining DMS #'
+          data: highChartObject.chartNumOfTotalDMS_NewDMSArray
+          stack: 'ActiveIssues'
         }
         {
-          yAxis: 0
           name: 'New DMS #'
           data: highChartObject.chartNumOfNewDMSArray
+          stack: 'ActiveIssues'
         }
         {
-          yAxis: 0
           name: 'Fixed DMS #'
           data: highChartObject.chartNumOfFixedDMSArray
+          stack: 'InactiveIssues'
         }
       ]
     return
@@ -52,6 +55,7 @@ class HighChartObjects
   chartNumOfTotalDMSArray: []
   chartNumOfNewDMSArray  : []
   chartNumOfFixedDMSArray: []
+  chartNumOfTotalDMS_NewDMSArray: []
 
   constructor: (json)->
     if $.isEmptyObject(json) != true
@@ -60,11 +64,12 @@ class HighChartObjects
       originalJSON = _complimentDate.call @, originalJSON
       _createChartElement.call @, originalJSON
 
-      #console.log originalJSON
-      #console.log "Date: #{@chartDateArray}"
-      #console.log "TTL#: #{@chartNumOfTotalDMSArray}"
-      #console.log "New#: #{@chartNumOfNewDMSArray}"
-      #console.log "Fix#: #{@chartNumOfFixedDMSArray}"
+      console.log originalJSON
+      console.log "Date: #{@chartDateArray}"
+      console.log "TTL#: #{@chartNumOfTotalDMSArray}"
+      console.log "New#: #{@chartNumOfNewDMSArray}"
+      console.log "Fix#: #{@chartNumOfFixedDMSArray}"
+      console.log "TTL-New#: #{@chartNumOfTotalDMS_NewDMSArray}"
     else
       console.log "there is no data.."
 
@@ -101,6 +106,11 @@ class HighChartObjects
         numOfNewFixedItem = _compareDMSList.call(@, originalJSON[count-1]["DMS_List"], originalJSON[count]["DMS_List"])
         @chartNumOfFixedDMSArray.push (numOfNewFixedItem[1])
         @chartNumOfNewDMSArray.push(numOfNewFixedItem[0])
+
+    for item, count in @chartNumOfTotalDMSArray
+      TotalMinusNewDMS = @chartNumOfTotalDMSArray[count] - @chartNumOfNewDMSArray[count]
+      @chartNumOfTotalDMS_NewDMSArray.push(TotalMinusNewDMS)
+
 
   ## @private class
   _compareDMSList = (originalList, targetList)->
