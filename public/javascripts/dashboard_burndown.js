@@ -27,6 +27,17 @@ startpoint_dashboard_burndown = function(queryKey, chartDuration) {
       tooltip: {
         shared: true
       },
+      legend: {
+        align: 'right',
+        x: -30,
+        verticalAlign: 'top',
+        y: 25,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+        borderColor: '#CCC',
+        borderWidth: 1,
+        shadow: false
+      },
       navigation: {
         buttonOptions: {
           enabled: true
@@ -93,12 +104,6 @@ HighChartObjects = (function() {
       originalJSON = _removeDuplicateItems.call(this, originalJSON);
       originalJSON = _complimentDate.call(this, originalJSON);
       _createChartElement.call(this, originalJSON);
-      console.log(originalJSON);
-      console.log("Date: " + this.chartDateArray);
-      console.log("TTL#: " + this.chartNumOfTotalDMSArray);
-      console.log("New#: " + this.chartNumOfNewDMSArray);
-      console.log("Fix#: " + this.chartNumOfFixedDMSArray);
-      console.log("TTL-New#: " + this.chartNumOfTotalDMS_NewDMSArray);
     } else {
       console.log("there is no data..");
     }

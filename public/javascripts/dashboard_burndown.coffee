@@ -18,6 +18,21 @@ startpoint_dashboard_burndown = (queryKey, chartDuration) ->
         min: 0
         title: text: '# of DMS'
       tooltip: shared: true
+      legend:
+        align: 'right'
+        x: -30
+        verticalAlign: 'top'
+        y: 25
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white'
+        borderColor: '#CCC'
+        borderWidth: 1
+        shadow: false
+
+      #tooltip: formatter: ->
+      #  return '<b>' + this.x + '</b><br/>' + this.series.name + ': ' + this.y + '<br/>' + 'Total: ' + this.point.stackTotal
+
+
       navigation: buttonOptions: enabled: true
       exporting:
         enabled: true
@@ -64,12 +79,12 @@ class HighChartObjects
       originalJSON = _complimentDate.call @, originalJSON
       _createChartElement.call @, originalJSON
 
-      console.log originalJSON
-      console.log "Date: #{@chartDateArray}"
-      console.log "TTL#: #{@chartNumOfTotalDMSArray}"
-      console.log "New#: #{@chartNumOfNewDMSArray}"
-      console.log "Fix#: #{@chartNumOfFixedDMSArray}"
-      console.log "TTL-New#: #{@chartNumOfTotalDMS_NewDMSArray}"
+      #console.log originalJSON
+      #console.log "Date: #{@chartDateArray}"
+      #console.log "TTL#: #{@chartNumOfTotalDMSArray}"
+      #console.log "New#: #{@chartNumOfNewDMSArray}"
+      #console.log "Fix#: #{@chartNumOfFixedDMSArray}"
+      #console.log "TTL-New#: #{@chartNumOfTotalDMS_NewDMSArray}"
     else
       console.log "there is no data.."
 
