@@ -10,7 +10,7 @@ collectionDMSQuery   = 'dms_test'
 collectionDailyCount = 'dms_daily_count'
 db_instance = ""
 expireDuration = 5184000 ## sec, 60 days = 3600 * 24 * 60
-seeAsValidRecordDuration = 7200000  # msec, 2h = 1000*60*60*2
+seeAsValidRecordDuration = 43200000  # msec, 12h = 1000*60*60*12
 
 mongo_query.open_db(DB_name).then((database) ->
   mongo_query.check_collection_exist database, collectionDailyCount)
@@ -21,9 +21,9 @@ mongo_query.open_db(DB_name).then((database) ->
   logger.error error
 
 
-## currently invoked every day at 21:00 UTC (= 6:00 JST)
+## currently invoked every day at 00:15 UTC (= 9:15 JST)
 ## if you want to execute job every 1 mins, just set to "*/1 * * * *"
-j = schedule.scheduleJob('00 7 * * *', ->
+j = schedule.scheduleJob('30 7 * * *', ->
 
   date_string = getDateString(new Date)
   logger.error "schedule job invoked : " + date_string
@@ -45,6 +45,9 @@ j = schedule.scheduleJob('00 7 * * *', ->
       deltaDate = new Date - Date.parse(result[count]["lastQueryDate"])
       if deltaDate < seeAsValidRecordDuration
         output_array.push(result[count]['_id'])
+      else
+        logger.error "Schedule job see the record out of date : " + result[count]['_id']
+
 
     for query_key_item in output_array
       promise_array.push(mongo_query.dump_one(db_instance, collectionDMSQuery, query_key_item, 1))

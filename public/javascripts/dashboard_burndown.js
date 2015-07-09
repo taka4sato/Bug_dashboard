@@ -38,15 +38,13 @@ startpoint_dashboard_burndown = function(queryKey, chartDuration) {
         borderWidth: 1,
         shadow: false
       },
+      tooltip: {
+        valueSuffix: ' items'
+      },
       navigation: {
         buttonOptions: {
           enabled: true
         }
-      },
-      exporting: {
-        enabled: true,
-        type: 'image/jpeg',
-        scale: 2
       },
       credits: {
         enabled: false

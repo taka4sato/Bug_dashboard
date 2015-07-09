@@ -29,15 +29,10 @@ startpoint_dashboard_burndown = (queryKey, chartDuration) ->
         borderWidth: 1
         shadow: false
 
-      #tooltip: formatter: ->
-      #  return '<b>' + this.x + '</b><br/>' + this.series.name + ': ' + this.y + '<br/>' + 'Total: ' + this.point.stackTotal
-
+      tooltip: valueSuffix: ' items'
 
       navigation: buttonOptions: enabled: true
-      exporting:
-        enabled: true
-        type: 'image/jpeg'
-        scale: 2
+
       credits: enabled: false
       plotOptions: column:
         stacking: 'normal'
