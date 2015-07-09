@@ -17,22 +17,22 @@ startpoint_dashboard_burndown = (queryKey, chartDuration) ->
       yAxis:
         min: 0
         title: text: '# of DMS'
-      tooltip: shared: true
+        stackLabels:
+          enabled: true
+          style:
+            fontWeight: 'bold'
+            color: Highcharts.theme and Highcharts.theme.textColor or 'black'
       legend:
         align: 'right'
         x: -30
         verticalAlign: 'top'
         y: 25
-        floating: true,
+        floating: true
         backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white'
         borderColor: '#CCC'
         borderWidth: 1
         shadow: false
-
-      tooltip: valueSuffix: ' items'
-
       navigation: buttonOptions: enabled: true
-
       credits: enabled: false
       plotOptions: column:
         stacking: 'normal'

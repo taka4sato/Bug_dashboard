@@ -22,10 +22,14 @@ startpoint_dashboard_burndown = function(queryKey, chartDuration) {
         min: 0,
         title: {
           text: '# of DMS'
+        },
+        stackLabels: {
+          enabled: true,
+          style: {
+            fontWeight: 'bold',
+            color: Highcharts.theme && Highcharts.theme.textColor || 'black'
+          }
         }
-      },
-      tooltip: {
-        shared: true
       },
       legend: {
         align: 'right',
@@ -37,9 +41,6 @@ startpoint_dashboard_burndown = function(queryKey, chartDuration) {
         borderColor: '#CCC',
         borderWidth: 1,
         shadow: false
-      },
-      tooltip: {
-        valueSuffix: ' items'
       },
       navigation: {
         buttonOptions: {

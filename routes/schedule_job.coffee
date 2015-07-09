@@ -23,7 +23,7 @@ mongo_query.open_db(DB_name).then((database) ->
 
 ## currently invoked every day at 00:15 UTC (= 9:15 JST)
 ## if you want to execute job every 1 mins, just set to "*/1 * * * *"
-j = schedule.scheduleJob('30 7 * * *', ->
+j = schedule.scheduleJob('15 0 * * *', ->
 
   date_string = getDateString(new Date)
   logger.error "schedule job invoked : " + date_string
