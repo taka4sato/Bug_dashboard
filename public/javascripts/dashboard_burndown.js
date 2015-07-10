@@ -69,7 +69,7 @@ startpoint_dashboard_burndown = function(queryKey, chartDuration) {
           data: highChartObject.chartNumOfNewDMSArray,
           stack: 'ActiveIssues'
         }, {
-          name: 'Fixed DMS #',
+          name: 'Fixed or Transferred DMS #',
           data: highChartObject.chartNumOfFixedDMSArray,
           stack: 'InactiveIssues'
         }
