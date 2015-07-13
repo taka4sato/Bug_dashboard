@@ -40,6 +40,10 @@ router.post '/', (req, res) ->
     logger.error error
     res.end 'Fail to POST queries : ' + error
     return
+  .finally () ->
+    if (dbInstance)
+      dbInstance.close()
+    return
   return
 
 module.exports = router

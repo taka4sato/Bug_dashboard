@@ -22,9 +22,9 @@ createTable = (json, tag_date_info) ->
       console.log json
       console.log json[0]["query_key"]
 
-      $.each json[0]["DMS_List"], (i, item) ->
-        console.log item["DMS_ID"]
-        console.log item["Modified_date"]
+      #$.each json[0]["DMS_List"], (i, item) ->
+        #console.log item["DMS_ID"]
+        #console.log item["Modified_date"]
         #console.log "=========================="
 
       $("#table_placeholder").html "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>"
@@ -61,6 +61,11 @@ createTable = (json, tag_date_info) ->
           orderable: false
           defaultContent: ''
         ,
+          data: null
+          title: "Earliest Deadline"
+          width: "5px"
+          defaultContent: ''
+        ,
           data : "Modified_date"
           title: "Last Modified"
           width: "80px"
@@ -83,7 +88,12 @@ createTable = (json, tag_date_info) ->
             if type == "display"
               return countTag(data, meta)
         },{
-          targets: [6,7]
+          targets: [6]
+          render: (data, type, row, meta) ->
+            if type == "display"
+              return showEarliestTagDeadline(data, meta)
+        },{
+          targets: [7,8]
           render: (data, type, row) ->
             if type == "sort"
               return Date.parse(data.replace(/-/g, "/") + " GMT+0000")
@@ -130,17 +140,31 @@ createTable = (json, tag_date_info) ->
   else
     $("#DMS_update_time").append "<b>Error!</b> Fail to load query result"
 
-countTag = (tag_info, meta_info) ->
-  #console.log "------------"
-  #console.log tag_info["Tag_info"]
-  #console.log tag_info
-  #console.log meta_info
+showEarliestTagDeadline = (tag_info, meta_info) ->
+  console.log  tag_info
   if $.isEmptyObject(tag_info["Tag_info"])    # no tag
-    #console.log "------------"
+    return ""
+  else
+    isASAPExist = false
+    $.each tag_info["Tag_info"], (i, item_tag_info) ->
+      console.log item_tag_info["Tag"]
+      console.log item_tag_info["DeliveryBranch"]
+
+      if item_tag_info["Tag"] == "Fix ASAP"
+        isASAPExist = true
+        return false
+
+    if  isASAPExist == true
+      return "ASAP"
+    else
+      return tag_info["Tag_info"][0]["Tag"]
+      #return "fufufu"
+
+
+countTag = (tag_info, meta_info) ->
+  if $.isEmptyObject(tag_info["Tag_info"])    # no tag
     return ""
   else                                        # if any tag
-    #console.log tag_info["Tag_info"][0]
-    #console.log "------------"
     count = 0
     $.each tag_info["Tag_info"], (i, item) ->
       count = i

@@ -11,10 +11,13 @@ mongo_query = require('./mongo_query')
 
 DB_name = 'posttest'
 Collection_name = 'dms_test'
+dbInstance = ""
+
 router.get '/', (req, res) ->
   mongo_query.open_db(DB_name).then((database) ->
     mongo_query.check_collection_exist database, Collection_name)
   .then((database) ->
+    dbInstance = database
     query_pipe = [ { $group:
       _id: '$query_key'
       lastQueryDate: '$max': '$query_date'
@@ -37,6 +40,10 @@ router.get '/', (req, res) ->
   .catch (error) ->
     logger.error error
     res.end 'Fail to list queries : ' + error
+    return
+  .finally () ->
+    if (dbInstance)
+      dbInstance.close()
     return
   return
 

@@ -1,4 +1,4 @@
-var addDetailTagInfo, countTag, createTable, escapeHTML, highlightDate, optimezeTitleLength, startpoint_dashboard_query, timeAgoInWords, timeDelta;
+var addDetailTagInfo, countTag, createTable, escapeHTML, highlightDate, optimezeTitleLength, showEarliestTagDeadline, startpoint_dashboard_query, timeAgoInWords, timeDelta;
 
 startpoint_dashboard_query = function(queryKey) {
   var targetURL;
@@ -24,10 +24,6 @@ createTable = function(json, tag_date_info) {
     } else {
       console.log(json);
       console.log(json[0]["query_key"]);
-      $.each(json[0]["DMS_List"], function(i, item) {
-        console.log(item["DMS_ID"]);
-        return console.log(item["Modified_date"]);
-      });
       $("#table_placeholder").html("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>");
       dms_Table = $("#DMS_Table").DataTable({
         data: json[0].DMS_List,
@@ -62,6 +58,11 @@ createTable = function(json, tag_date_info) {
             orderable: false,
             defaultContent: ''
           }, {
+            data: null,
+            title: "Earliest Deadline",
+            width: "5px",
+            defaultContent: ''
+          }, {
             data: "Modified_date",
             title: "Last Modified",
             width: "80px"
@@ -90,7 +91,14 @@ createTable = function(json, tag_date_info) {
               }
             }
           }, {
-            targets: [6, 7],
+            targets: [6],
+            render: function(data, type, row, meta) {
+              if (type === "display") {
+                return showEarliestTagDeadline(data, meta);
+              }
+            }
+          }, {
+            targets: [7, 8],
             render: function(data, type, row) {
               if (type === "sort") {
                 return Date.parse(data.replace(/-/g, "/") + " GMT+0000");
@@ -141,6 +149,29 @@ createTable = function(json, tag_date_info) {
     }
   } else {
     return $("#DMS_update_time").append("<b>Error!</b> Fail to load query result");
+  }
+};
+
+showEarliestTagDeadline = function(tag_info, meta_info) {
+  var isASAPExist;
+  console.log(tag_info);
+  if ($.isEmptyObject(tag_info["Tag_info"])) {
+    return "";
+  } else {
+    isASAPExist = false;
+    $.each(tag_info["Tag_info"], function(i, item_tag_info) {
+      console.log(item_tag_info["Tag"]);
+      console.log(item_tag_info["DeliveryBranch"]);
+      if (item_tag_info["Tag"] === "Fix ASAP") {
+        isASAPExist = true;
+        return false;
+      }
+    });
+    if (isASAPExist === true) {
+      return "ASAP";
+    } else {
+      return tag_info["Tag_info"][0]["Tag"];
+    }
   }
 };
 

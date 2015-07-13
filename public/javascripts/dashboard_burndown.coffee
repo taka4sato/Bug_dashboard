@@ -20,7 +20,6 @@ startpoint_dashboard_burndown = (queryKey, chartDuration) ->
         stackLabels:
           enabled: true
           style:
-            fontWeight: 'bold'
             color: Highcharts.theme and Highcharts.theme.textColor or 'black'
       legend:
         align: 'right'
@@ -40,17 +39,17 @@ startpoint_dashboard_burndown = (queryKey, chartDuration) ->
         enableMouseTracking: false
       series: [
         {
-          name: 'Remaining DMS #'
+          name: 'Remaining DMS'
           data: highChartObject.chartNumOfTotalDMS_NewDMSArray
           stack: 'ActiveIssues'
         }
         {
-          name: 'New DMS #'
+          name: 'New DMS'
           data: highChartObject.chartNumOfNewDMSArray
           stack: 'ActiveIssues'
         }
         {
-          name: 'Fixed or Transferred DMS #'
+          name: 'Fixed or Transferred DMS'
           data: highChartObject.chartNumOfFixedDMSArray
           stack: 'InactiveIssues'
         }

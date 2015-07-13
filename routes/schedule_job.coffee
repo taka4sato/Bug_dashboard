@@ -8,7 +8,7 @@ router = express.Router()
 DB_name = 'posttest'
 collectionDMSQuery   = 'dms_test'
 collectionDailyCount = 'dms_daily_count'
-db_instance = ""
+dbInstance = ""
 expireDuration = 5184000 ## sec, 60 days = 3600 * 24 * 60
 seeAsValidRecordDuration = 43200000  # msec, 12h = 1000*60*60*12
 
@@ -31,12 +31,12 @@ j = schedule.scheduleJob('15 0 * * *', ->
   mongo_query.open_db(DB_name).then((database) ->
     mongo_query.check_collection_exist database, collectionDMSQuery)
   .then((database) ->
-    db_instance = database
+    dbInstance = database
     query_pipe = [ { $group:
       _id: '$query_key'
       lastQueryDate: '$max': '$query_date'
       count: '$sum': 1 } ]
-    mongo_query.query_list db_instance, query_pipe, collectionDMSQuery)
+    mongo_query.query_list dbInstance, query_pipe, collectionDMSQuery)
   .then((result) ->
     output_array = []
     promise_array = []
@@ -50,7 +50,7 @@ j = schedule.scheduleJob('15 0 * * *', ->
 
 
     for query_key_item in output_array
-      promise_array.push(mongo_query.dump_one(db_instance, collectionDMSQuery, query_key_item, 1))
+      promise_array.push(mongo_query.dump_one(dbInstance, collectionDMSQuery, query_key_item, 1))
     promise.all(promise_array))
   .then((dataArray) ->
     promise_array = []
@@ -73,15 +73,19 @@ j = schedule.scheduleJob('15 0 * * *', ->
       object_to_register["DMS_List"] = DMS_id_array
       #logger.error "query date : " + object_to_register["query_date"] + "registered key : " + object_to_register["query_key"]
       #logger.error "registered #   : " + object_to_register["DMS_count"]
-      promise_array.push(mongo_query.post_item db_instance, collectionDailyCount, object_to_register)
+      promise_array.push(mongo_query.post_item dbInstance, collectionDailyCount, object_to_register)
     promise.all(promise_array))
   .catch (error) ->
     logger.error error
+  .finally () ->
+    if (dbInstance)
+      dbInstance.close()
+    return
 )
 
 ###
 .then((result) ->
-  mongo_query.dump_latest_items db_instance, collectionDailyCount, 30)
+  mongo_query.dump_latest_items dbInstance, collectionDailyCount, 30)
 .then((items) ->
   logger.error "==last 5 items==================="
   for item in items

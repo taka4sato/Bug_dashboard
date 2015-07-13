@@ -8,8 +8,9 @@ mongodb = require("mongodb")
 mongo_url = process.env.MONGO_HOST or 'localhost:27017'
 exports.open_db = (database_name) ->
   new promise((resolve, reject) ->
-    mongodb.MongoClient.connect 'mongodb://' + mongo_url + '/' + database_name, (error, database) ->
-      unless error
+    options = server: socketOptions: connectTimeoutMS: 1000
+    mongodb.MongoClient.connect 'mongodb://' + mongo_url + '/' + database_name, options, (error, database) ->
+      if !error
         resolve database
       else
         reject error
