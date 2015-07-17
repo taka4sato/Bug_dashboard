@@ -75,25 +75,27 @@ createTable = (json, tag_date_info) ->
           width: "80px"
         ]
         columnDefs: [{
-          targets: [0]
+          targets: [0]   # for DMS ID
           render: (data, type, row) ->
             return "<a href=\"http://ffs.sonyericsson.net/WebPages/Search.aspx?q=1___" + data + "___issue\" TARGET=\"_blank\">" + data + "</a>"
         },{
-          targets: [1]
+          targets: [1]   # for Title
           render: (data, type, row) ->
             return optimezeTitleLength(data)
         },{
-          targets: [5]
+          targets: [5]   # for has Tag
           render: (data, type, row, meta) ->
             if type == "display"
               return countTag(data, meta)
         },{
-          targets: [6]
+          targets: [6]   # for earliest tag deadline
           render: (data, type, row, meta) ->
-            if type == "display"
-              return showEarliestTagDeadline(data, meta)
+            if type == "sort"
+              return sortEarliestTagDeadline(data, tag_date_info)
+            else
+              return showEarliestTagDeadline(data, tag_date_info)
         },{
-          targets: [7,8]
+          targets: [7,8] # Submit/last modified date
           render: (data, type, row) ->
             if type == "sort"
               return Date.parse(data.replace(/-/g, "/") + " GMT+0000")
@@ -140,25 +142,54 @@ createTable = (json, tag_date_info) ->
   else
     $("#DMS_update_time").append "<b>Error!</b> Fail to load query result"
 
-showEarliestTagDeadline = (tag_info, meta_info) ->
-  console.log  tag_info
+
+calculateEarliestTagDeadline = (tag_info, tag_date_info) ->
   if $.isEmptyObject(tag_info["Tag_info"])    # no tag
     return ""
   else
     isASAPExist = false
-    $.each tag_info["Tag_info"], (i, item_tag_info) ->
-      console.log item_tag_info["Tag"]
-      console.log item_tag_info["DeliveryBranch"]
+    tagDeadlineDateArray = []
+    $.each tag_info["Tag_info"], (i, tagInfoItem) ->
+      #console.log tagInfoItem["Tag"]
+      #console.log tagInfoItem["DeliveryBranch"]
 
-      if item_tag_info["Tag"] == "Fix ASAP"
+      if tagInfoItem["Tag"] == "Fix ASAP"
         isASAPExist = true
         return false
+      else
+        $.each tag_date_info["Tag_item"], (i, itemDateItem) ->
+          if itemDateItem["Tag_branch"] == tagInfoItem["DeliveryBranch"] and itemDateItem["Tag_name"] == tagInfoItem["Tag"]
+            tagDeadlineDateArray.push(itemDateItem["Tag_deadline"])
 
     if  isASAPExist == true
       return "ASAP"
+    else if tagDeadlineDateArray.length == 0
+      return ""
     else
-      return tag_info["Tag_info"][0]["Tag"]
-      #return "fufufu"
+      tagDeadlineDateArray.sort (a, b) ->
+        if a < b
+          return -1
+        else
+          return 1
+      return tagDeadlineDateArray[0]
+
+sortEarliestTagDeadline = (tag_info, tag_date_info) ->
+  earliestDeadline = calculateEarliestTagDeadline(tag_info, tag_date_info)
+  if earliestDeadline == "ASAP"
+    return "0"
+  else if earliestDeadline == ""
+    return "9"
+
+  else
+    return earliestDeadline
+
+showEarliestTagDeadline = (tag_info, tag_date_info) ->
+  #console.log  tag_info
+  earliestDeadline = calculateEarliestTagDeadline(tag_info, tag_date_info)
+  if earliestDeadline == "ASAP"
+    return '<font color="red"><b>ASAP</b></font>'
+  else
+    return  earliestDeadline
 
 
 countTag = (tag_info, meta_info) ->
@@ -179,12 +210,7 @@ addDetailTagInfo = (tag_info, tag_date_info) ->
 
   tag_string = ""
   $.each tag_info["Tag_info"], (i, item_tag_info) ->
-    console.log item_tag_info
-    #console.log item_tag_info["Tag"]
-    #console.log item_tag_info["DeliveryBranch"]
-
     if item_tag_info["Tag"] == "Fix ASAP"
-      console.log
       tag_string += "<tr><td>" + item_tag_info["DeliveryBranch"] + "</td><td>" + item_tag_info["Tag"] + "</td><td bgcolor='#FF0000'>ASAP</td></tr>"
 
     else

@@ -1,4 +1,4 @@
-var addDetailTagInfo, countTag, createTable, escapeHTML, highlightDate, optimezeTitleLength, showEarliestTagDeadline, startpoint_dashboard_query, timeAgoInWords, timeDelta;
+var addDetailTagInfo, calculateEarliestTagDeadline, countTag, createTable, escapeHTML, highlightDate, optimezeTitleLength, showEarliestTagDeadline, sortEarliestTagDeadline, startpoint_dashboard_query, timeAgoInWords, timeDelta;
 
 startpoint_dashboard_query = function(queryKey) {
   var targetURL;
@@ -93,8 +93,10 @@ createTable = function(json, tag_date_info) {
           }, {
             targets: [6],
             render: function(data, type, row, meta) {
-              if (type === "display") {
-                return showEarliestTagDeadline(data, meta);
+              if (type === "sort") {
+                return sortEarliestTagDeadline(data, tag_date_info);
+              } else {
+                return showEarliestTagDeadline(data, tag_date_info);
               }
             }
           }, {
@@ -152,26 +154,61 @@ createTable = function(json, tag_date_info) {
   }
 };
 
-showEarliestTagDeadline = function(tag_info, meta_info) {
-  var isASAPExist;
-  console.log(tag_info);
+calculateEarliestTagDeadline = function(tag_info, tag_date_info) {
+  var isASAPExist, tagDeadlineDateArray;
   if ($.isEmptyObject(tag_info["Tag_info"])) {
     return "";
   } else {
     isASAPExist = false;
-    $.each(tag_info["Tag_info"], function(i, item_tag_info) {
-      console.log(item_tag_info["Tag"]);
-      console.log(item_tag_info["DeliveryBranch"]);
-      if (item_tag_info["Tag"] === "Fix ASAP") {
+    tagDeadlineDateArray = [];
+    $.each(tag_info["Tag_info"], function(i, tagInfoItem) {
+      if (tagInfoItem["Tag"] === "Fix ASAP") {
         isASAPExist = true;
         return false;
+      } else {
+        return $.each(tag_date_info["Tag_item"], function(i, itemDateItem) {
+          if (itemDateItem["Tag_branch"] === tagInfoItem["DeliveryBranch"] && itemDateItem["Tag_name"] === tagInfoItem["Tag"]) {
+            return tagDeadlineDateArray.push(itemDateItem["Tag_deadline"]);
+          }
+        });
       }
     });
     if (isASAPExist === true) {
       return "ASAP";
+    } else if (tagDeadlineDateArray.length === 0) {
+      return "";
     } else {
-      return tag_info["Tag_info"][0]["Tag"];
+      tagDeadlineDateArray.sort(function(a, b) {
+        if (a < b) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      return tagDeadlineDateArray[0];
     }
+  }
+};
+
+sortEarliestTagDeadline = function(tag_info, tag_date_info) {
+  var earliestDeadline;
+  earliestDeadline = calculateEarliestTagDeadline(tag_info, tag_date_info);
+  if (earliestDeadline === "ASAP") {
+    return "0";
+  } else if (earliestDeadline === "") {
+    return "9";
+  } else {
+    return earliestDeadline;
+  }
+};
+
+showEarliestTagDeadline = function(tag_info, tag_date_info) {
+  var earliestDeadline;
+  earliestDeadline = calculateEarliestTagDeadline(tag_info, tag_date_info);
+  if (earliestDeadline === "ASAP") {
+    return '<font color="red"><b>ASAP</b></font>';
+  } else {
+    return earliestDeadline;
   }
 };
 
@@ -198,9 +235,7 @@ addDetailTagInfo = function(tag_info, tag_date_info) {
   tag_string = "";
   $.each(tag_info["Tag_info"], function(i, item_tag_info) {
     var tag_deadline;
-    console.log(item_tag_info);
     if (item_tag_info["Tag"] === "Fix ASAP") {
-      console.log;
       return tag_string += "<tr><td>" + item_tag_info["DeliveryBranch"] + "</td><td>" + item_tag_info["Tag"] + "</td><td bgcolor='#FF0000'>ASAP</td></tr>";
     } else {
       tag_deadline = "";
