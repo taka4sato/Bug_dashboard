@@ -30,7 +30,7 @@ createTable = (json, tag_date_info) ->
       $("#table_placeholder").html "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display responsive\" id=\"DMS_Table\"></table>"
       dms_Table = $("#DMS_Table").DataTable
         data: json[0].DMS_List
-        pageLength: 100
+        pageLength: 500
         autoWidth: false
         bStateSave: true
         order: [[4, "desc"]]
@@ -86,6 +86,11 @@ createTable = (json, tag_date_info) ->
           targets: [1]   # for Title
           render: (data, type, row) ->
             return optimezeTitleLength(data)
+        },{
+          targets: [5]   # for Damage Level
+          render: (data, type, row, meta) ->
+            if type == "sort"
+              return countTag(data, meta)
         },{
           targets: [6]   # for has Tag
           render: (data, type, row, meta) ->
