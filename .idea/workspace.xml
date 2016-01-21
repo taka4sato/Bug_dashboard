@@ -50,10 +50,10 @@
       <file leaf-file-name="dashboard_query.coffee" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/javascripts/dashboard_query.coffee">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.50852877" vertical-offset="1287" max-vertical-offset="5796">
-              <caret line="98" column="54" selection-start-line="98" selection-start-column="32" selection-end-line="98" selection-end-column="32" />
+            <state vertical-scroll-proportion="0.33582088" vertical-offset="315" max-vertical-offset="5796">
+              <caret line="35" column="35" selection-start-line="35" selection-start-column="35" selection-end-line="35" selection-end-column="35" />
               <folding>
-                <marker date="1453377164859" expanded="false" signature="8459:8477" placeholder="..." />
+                <marker date="1453377487511" expanded="false" signature="8472:8490" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -833,10 +833,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/javascripts/dashboard_query.coffee">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.50852877" vertical-offset="1287" max-vertical-offset="5796">
-          <caret line="98" column="54" selection-start-line="98" selection-start-column="32" selection-end-line="98" selection-end-column="32" />
+        <state vertical-scroll-proportion="0.33582088" vertical-offset="315" max-vertical-offset="5796">
+          <caret line="35" column="35" selection-start-line="35" selection-start-column="35" selection-end-line="35" selection-end-column="35" />
           <folding>
-            <marker date="1453377164859" expanded="false" signature="8459:8477" placeholder="..." />
+            <marker date="1453377487511" expanded="false" signature="8472:8490" placeholder="..." />
           </folding>
         </state>
       </provider>

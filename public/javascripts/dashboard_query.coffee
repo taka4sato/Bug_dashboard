@@ -33,7 +33,7 @@ createTable = (json, tag_date_info) ->
         pageLength: 500
         autoWidth: false
         bStateSave: true
-        order: [[4, "desc"]]
+        order: [[5, "desc"], [9, "desc"]]
 
         columns: [
           data : "DMS_ID"
