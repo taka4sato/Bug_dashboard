@@ -52,6 +52,10 @@ createTable = function(json, tag_date_info) {
             title: "Type",
             width: "60px"
           }, {
+            data: "DamageLevel",
+            title: "DM",
+            width: "60px"
+          }, {
             data: null,
             title: "Tag",
             width: "5px",
@@ -84,14 +88,14 @@ createTable = function(json, tag_date_info) {
               return optimezeTitleLength(data);
             }
           }, {
-            targets: [5],
+            targets: [6],
             render: function(data, type, row, meta) {
               if (type === "display") {
                 return countTag(data, meta);
               }
             }
           }, {
-            targets: [6],
+            targets: [7],
             render: function(data, type, row, meta) {
               if (type === "sort") {
                 return sortEarliestTagDeadline(data, tag_date_info);
@@ -100,7 +104,7 @@ createTable = function(json, tag_date_info) {
               }
             }
           }, {
-            targets: [7, 8],
+            targets: [8, 9],
             render: function(data, type, row) {
               if (type === "sort") {
                 return Date.parse(data.replace(/-/g, "/") + " GMT+0000");

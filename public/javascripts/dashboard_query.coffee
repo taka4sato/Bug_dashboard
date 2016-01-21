@@ -142,7 +142,6 @@ createTable = (json, tag_date_info) ->
         dashboard_URL = window.location.protocol + "//" + window.location.host + "/v1/daily_count?query_key=" + encodeURIComponent(json[0]["query_key"])
         location.href = dashboard_URL
 
-
   else
     $("#DMS_update_time").append "<b>Error!</b> Fail to load query result"
 
