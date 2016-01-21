@@ -1,4 +1,4 @@
-var addDetailTagInfo, calculateEarliestTagDeadline, countTag, createTable, escapeHTML, highlightDate, optimezeTitleLength, showEarliestTagDeadline, sortEarliestTagDeadline, startpoint_dashboard_query, timeAgoInWords, timeDelta;
+var addDetailTagInfo, calculateEarliestTagDeadline, countTag, createTable, damageLevelOrder, escapeHTML, highlightDate, optimezeTitleLength, showEarliestTagDeadline, sortEarliestTagDeadline, startpoint_dashboard_query, timeAgoInWords, timeDelta;
 
 startpoint_dashboard_query = function(queryKey) {
   var targetURL;
@@ -53,7 +53,7 @@ createTable = function(json, tag_date_info) {
             width: "60px"
           }, {
             data: "DamageLevel",
-            title: "DM",
+            title: "Damage Level",
             width: "60px"
           }, {
             data: null,
@@ -86,6 +86,15 @@ createTable = function(json, tag_date_info) {
             targets: [1],
             render: function(data, type, row) {
               return optimezeTitleLength(data);
+            }
+          }, {
+            targets: [5],
+            render: function(data, type, row) {
+              if (type === "sort") {
+                return damageLevelOrder(data);
+              } else {
+                return data;
+              }
             }
           }, {
             targets: [6],
@@ -155,6 +164,20 @@ createTable = function(json, tag_date_info) {
     }
   } else {
     return $("#DMS_update_time").append("<b>Error!</b> Fail to load query result");
+  }
+};
+
+damageLevelOrder = function(data) {
+  if (data === "DM1") {
+    return 4;
+  } else if (data === "DM2") {
+    return 3;
+  } else if (data === "DM3") {
+    return 2;
+  } else if (data === "DM4") {
+    return 1;
+  } else {
+    return 0;
   }
 };
 

@@ -56,7 +56,7 @@ createTable = (json, tag_date_info) ->
           width: "60px"
         ,
           data : "DamageLevel"
-          title: "DM"
+          title: "Damage Level"
           width: "60px"
         ,
           data: null
@@ -86,6 +86,13 @@ createTable = (json, tag_date_info) ->
           targets: [1]   # for Title
           render: (data, type, row) ->
             return optimezeTitleLength(data)
+        },{
+          targets: [5]   # for earliest tag deadline
+          render: (data, type, row) ->
+            if type == "sort"
+              return damageLevelOrder(data)
+            else
+              return data
         },{
           targets: [6]   # for has Tag
           render: (data, type, row, meta) ->
@@ -146,6 +153,19 @@ createTable = (json, tag_date_info) ->
     $("#DMS_update_time").append "<b>Error!</b> Fail to load query result"
 
 
+damageLevelOrder = (data) ->
+  if data == "DM1"
+    return 4
+  else if data == "DM2"
+    return 3
+  else if data == "DM3"
+    return 2
+  else if data == "DM4"
+    return 1
+  else
+    return 0
+
+
 calculateEarliestTagDeadline = (tag_info, tag_date_info) ->
   if $.isEmptyObject(tag_info["Tag_info"])    # no tag
     return ""
@@ -176,6 +196,7 @@ calculateEarliestTagDeadline = (tag_info, tag_date_info) ->
           return 1
       return tagDeadlineDateArray[0]
 
+
 sortEarliestTagDeadline = (tag_info, tag_date_info) ->
   earliestDeadline = calculateEarliestTagDeadline(tag_info, tag_date_info)
   if earliestDeadline == "ASAP"
@@ -185,6 +206,7 @@ sortEarliestTagDeadline = (tag_info, tag_date_info) ->
 
   else
     return earliestDeadline
+
 
 showEarliestTagDeadline = (tag_info, tag_date_info) ->
   #console.log  tag_info
