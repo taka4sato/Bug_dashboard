@@ -55,6 +55,10 @@ createTable = (json, tag_date_info) ->
           title: "Type"
           width: "60px"
         ,
+          data : "DamageLevel"
+          title: "DM"
+          width: "60px"
+        ,
           data: null
           title: "Tag"
           width: "5px"
@@ -83,19 +87,19 @@ createTable = (json, tag_date_info) ->
           render: (data, type, row) ->
             return optimezeTitleLength(data)
         },{
-          targets: [5]   # for has Tag
+          targets: [6]   # for has Tag
           render: (data, type, row, meta) ->
             if type == "display"
               return countTag(data, meta)
         },{
-          targets: [6]   # for earliest tag deadline
+          targets: [7]   # for earliest tag deadline
           render: (data, type, row, meta) ->
             if type == "sort"
               return sortEarliestTagDeadline(data, tag_date_info)
             else
               return showEarliestTagDeadline(data, tag_date_info)
         },{
-          targets: [7,8] # Submit/last modified date
+          targets: [8,9] # Submit/last modified date
           render: (data, type, row) ->
             if type == "sort"
               return Date.parse(data.replace(/-/g, "/") + " GMT+0000")
