@@ -88,13 +88,6 @@ createTable = function(json, tag_date_info) {
               return optimezeTitleLength(data);
             }
           }, {
-            targets: [5],
-            render: function(data, type, row, meta) {
-              if (type === "sort") {
-                return countTag(data, meta);
-              }
-            }
-          }, {
             targets: [6],
             render: function(data, type, row, meta) {
               if (type === "display") {

@@ -87,11 +87,6 @@ createTable = (json, tag_date_info) ->
           render: (data, type, row) ->
             return optimezeTitleLength(data)
         },{
-          targets: [5]   # for Damage Level
-          render: (data, type, row, meta) ->
-            if type == "sort"
-              return countTag(data, meta)
-        },{
           targets: [6]   # for has Tag
           render: (data, type, row, meta) ->
             if type == "display"
